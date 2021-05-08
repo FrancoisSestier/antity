@@ -1,15 +1,17 @@
 #pragma once
+#include <cstdint>
+#include <vector>
 
 namespace ant
 {
 
-    typedef size_t IDType;
+    typedef uint32_t IDType;
     typedef IDType ComponentTypeID;
     typedef IDType Entity;
     typedef IDType ChunkID;
     const IDType NULL_ENTITY = 0;
-
-    template<typename T>
+    typedef std::vector<ComponentTypeID> ArchetypeID;
+	
     class TypeIdGenerator {
         static IDType identifier() noexcept {
             static IDType value = 0;
@@ -18,7 +20,7 @@ namespace ant
 
     public:
         template<typename U>
-        static IDType GetNewID() noexcept {
+        static IDType GetTypeID() noexcept {
             static const size_t value = identifier();
             return value;
         }
