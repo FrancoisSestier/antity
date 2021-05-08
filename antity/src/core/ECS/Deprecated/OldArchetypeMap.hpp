@@ -6,16 +6,22 @@
 
 namespace ant
 {
+	struct Record
+	{
+		ArchetypeBase* archetypeBase;
+		size_t index;
+	};
+
+	typedef std::unordered_map<Entity, Record> EntityRecordsMap;
 	
-	
-	class ArchetypeMap
+	class OldArchetypeMap
 	{
 	private:
 		typedef std::unordered_set<ArchetypeBase*, ArchetypeBase::hasher, ArchetypeBase::comparator> ArchetypeSet;
-
-		typedef std::unordered_map<Entity, ArchetypeBase*> EntityArchetypeMap;
 	
 	public:
+		ArchetypeMap(EntityRecordsMap* entityRecordsMap) : entityRecordsMap(entityRecordsMap) {}
+		
 		~ArchetypeMap()
 		{
 			for(ArchetypeBase* archetype : archetypeMap)
@@ -38,19 +44,9 @@ namespace ant
 			
 			return static_cast<Archetype<Cs...>*>(*archetypeMap.find(archetypeBase.get()));
 		}
-
-		bool Contains(Entity entity)
-		{
-			return entityArchetypeMap.contains(entity);
-		}
-
-		void OnEntityCreation(Entity entity)
-		{
-			entityArchetypeMap.emplace(entity,nullptr);
-		}
 	
 	private:
-		EntityArchetypeMap entityArchetypeMap;
+		EntityRecordsMap* entityRecordsMap;
 		ArchetypeSet archetypeMap;
 	};
 

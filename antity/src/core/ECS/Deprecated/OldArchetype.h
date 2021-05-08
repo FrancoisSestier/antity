@@ -87,7 +87,7 @@ namespace ant
 	};
 
 	template <typename ...Cs>
-	class Archetype : public ArchetypeBase
+	class OldArchetype : public ArchetypeBase
 	{
 	public:
 		~Archetype() override
@@ -105,6 +105,12 @@ namespace ant
 			(archetypeID.push_back(Component<Cs>::GetTypeID()),...);
             std::ranges::sort(archetypeID);
         }
+
+		size_t AddEntity(Entity entity)
+		{
+			entities.push_back(entity);
+			return entities.size() - 1;
+		}
 		
     	template<typename C>
         std::vector<C>& GetComponents() {
@@ -151,7 +157,7 @@ namespace ant
 
         container_type componentData;
 
-        std::vector<Entity> entityIds;
+        std::vector<Entity> entities;
 	};
 
 	template <typename ...Cs>
