@@ -7,6 +7,10 @@ namespace ant
 
 
 	
+	/**
+	 * \brief Iterable Class of type T
+	 * \tparam T underlying_type of the iterator
+	 */
 	template<typename T>
 	class View
 	{
@@ -21,7 +25,15 @@ namespace ant
 			
 		}
 		
+		/**
+		 * \brief return a MultiIterator to the beginning of the View 
+		 * \return MultiIterator < T, Iterator<T>>
+		 */
 		iterator begin() { return iterator{ begins, &begins, &ends }; }
+		/**
+		 * \brief return a MultiIterator to the end of the View
+		 * \return MultiIterator < T, Iterator<T>>
+		 */
 		iterator end() { return iterator{ ends, &begins, &ends }; }
 
 
@@ -30,6 +42,10 @@ namespace ant
 		std::vector<underlying_iterator> ends;
 	};
 
+	/**
+	 * \brief Iterable Class of type Args... offers an way to iterate over multiple views in parallel
+	 * \tparam Args underlying types of the iterators
+	 */
 	template<typename ...Args>
 	class MultiView
 	{
@@ -40,7 +56,15 @@ namespace ant
 		
 		MultiView(container data) : data(data) {}
 
+		/**
+		 * \brief return a zip iterator to the begining of the MultiView
+		 * \return ZipIterator<std::tuple<MultiIterator<Args, Iterator<Args>>...>, Args...>
+		 */
 		iterator begin() { return iterator{ std::make_tuple(std::get<View<Args>>(data).begin()...) }; }
+		/**
+		 * \brief return a zip iterator to the end of the MultiView
+		 * \return ZipIterator<std::tuple<MultiIterator<Args, Iterator<Args>>...>, Args...>
+		 */
 		iterator end() { return iterator{ std::make_tuple(std::get<View<Args>>(data).end()...) }; }
 
 	private:
@@ -54,6 +78,12 @@ namespace ant
 	
 	class ArchetypeViewBuilder {
 	public:
+		/**
+		 * \brief BuildAMultiView of Entities and Components(Cs) from given archetypes
+		 * \tparam Cs ComponentTypes
+		 * \param archetypes 
+		 * \return MultiView<Entity, Cs...>
+		 */
 		template<typename... Cs>
 		MultiView<Entity, Cs...> BuildMultiComponentView(const std::vector<Archetype*>& archetypes) {
 			auto entityView = std::make_tuple<View<Entity>>(BuildEntityView(archetypes));
@@ -61,6 +91,12 @@ namespace ant
 			return MultiView<Entity, Cs...>(std::tuple_cat(std::move(entityView), std::move(componentView)));
 		}
 
+		/**
+		 * \brief Build a View of Component Type T from sequence of Archetypes
+		 * \tparam T ComponentType
+		 * \param sequence vector of archetype to build view from
+		 * \return View<T> combined iterable
+		 */
 		template<typename T>
 		View<T> BuildComponentView(std::vector<Archetype*> sequence)
 		{
@@ -78,6 +114,11 @@ namespace ant
 			return View<T>(std::move(begins), std::move(ends));
 		}
 
+		/**
+		 * \brief Build a View of Entities from given archetypes 
+		 * \param archetypes 
+		 * \return View of Entities
+		 */
 		View<Entity> BuildEntityView(std::vector<Archetype*> archetypes)
 		{
 			std::vector<Iterator<Entity>> begins;
