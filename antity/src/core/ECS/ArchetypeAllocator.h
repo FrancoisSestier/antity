@@ -34,7 +34,7 @@ namespace ant
 		bool NeedSpace(Archetype* archetype, size_t componentIndex, size_t componentSize)
 		{
 			size_t currentSize = archetype->componentArrays.at(componentIndex).size;
-			size_t newSize = archetype->entities.size() * componentSize;
+			size_t newSize = archetype->entities.size() * componentSize + componentSize;
 			return newSize > currentSize;
 		}
 

@@ -61,9 +61,9 @@ struct MultiIterator
 	pointer operator->() { return iterators.at(index); }
 	
 	MultiIterator& operator++() {
-		if(++iterators.at(index) == ends->at(index))
+		if(++iterators.at(index) == ends->at(index) && index != ends->size()-1 )
 		{
-			std::cout << "here";
+			std::cout<<"here";
 			index++;
 		}
 		return *this;
@@ -81,6 +81,8 @@ struct MultiIterator
 	
 	friend bool operator== (const MultiIterator& a, const MultiIterator& b)
 	{
+		return (a.iterators.at(a.index) == b.iterators.at(a.index));
+		/*
 		if(a.iterators.size() != b.iterators.size())
 		{
 			return false;
@@ -93,9 +95,12 @@ struct MultiIterator
 			}
 		};
 		return true;
+		*/
 	};
 	
 	friend bool operator!= (const MultiIterator& a, const MultiIterator& b) {
+		return (a.iterators.at(a.index) != b.iterators.at(a.index));
+		/*
 		if (a.iterators.size() != b.iterators.size())
 		{
 			return true;
@@ -108,6 +113,7 @@ struct MultiIterator
 			}
 		};
 		return false;
+		*/
 	};
 
 public:
