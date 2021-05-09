@@ -91,7 +91,7 @@ namespace ant
 	template <class C>
 	ComponentTypeID Component<C>::GetTypeID()
 	{
-		return TypeIdGenerator::GetTypeID<C>();
+		return static_cast<ComponentTypeID>(TypeIdGenerator::GetTypeID<C>());
 	}
 	
 }

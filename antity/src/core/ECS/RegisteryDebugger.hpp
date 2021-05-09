@@ -11,7 +11,7 @@ namespace ant
 	public:
 		
 		template<typename C>
-		void OnRegisterComponent()
+		void OnComponentRegistration()
 		{
 			componentNameMap.emplace(TypeIdGenerator::GetTypeID<C>(), typeid(C).name() );
 		}

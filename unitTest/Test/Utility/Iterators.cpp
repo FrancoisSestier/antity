@@ -99,6 +99,7 @@ TEST(Iterators,MultiZipIterator)
 	auto seqB = ant::makeVectorSequence<float>(c, d);
 
 	int counter = 0;
+	
 	for (auto [i,j] : ant::zip<int,float>(seqA,seqB))
 	{
 		counter++;
@@ -107,5 +108,6 @@ TEST(Iterators,MultiZipIterator)
 			ASSERT_EQ(j, .4f);
 		}
 	}
+	
 	ASSERT_EQ(counter, 6);
 }
