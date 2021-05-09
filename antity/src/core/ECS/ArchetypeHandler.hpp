@@ -35,7 +35,7 @@ namespace  ant
 		template<typename C, typename ...Args>
 		void EmplaceComponent(Entity entity, Archetype* archetype, ComponentBase* component, size_t componentIndex, Args ...args)
 		{
-			AllocateSpaceIfNeeded(archetype, componentIndex, component);
+			archetypeAllocator.AllocateSpaceIfNeeded(archetype, componentIndex, component);
 			C* newComponent
 				= new (&archetype->componentArrays[componentIndex].
 					componentData[archetype->entities.size() * component->GetSize()])

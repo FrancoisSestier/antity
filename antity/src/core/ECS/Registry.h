@@ -39,6 +39,9 @@ namespace ant {
 		template<typename C, typename ...Args>
 		void AddComponent(Entity entity, ChunkID chunkId,Args... args);
 
+		template<typename C>
+		void GetComponent();
+		
 		template<typename ...Cs>
 		void RegisterComponents();
 
