@@ -3,6 +3,9 @@
 #include "ArchetypeAllocator.h"
 #include "Component.hpp"
 #include "Record.hpp"
+#include <ranges>
+
+#include "Registry.hpp"
 
 namespace  ant
 {
@@ -13,23 +16,6 @@ namespace  ant
 			: entityIndex(entityIndex),
 			componentMap(componentMap)
 		{
-		}
-
-		void MoveLastEntityTo(Archetype* archetype, size_t entityIndexB)
-		{
-			size_t lastEntityIndex = archetype->entities.size();
-			Entity lastEntity = archetype->entities.at(lastEntityIndex);
-			for (int i = 0; i < archetype->componentArrays.size(); i++)
-			{
-				ComponentTypeID componentTypeId = archetype->archetypeId.at(i);
-				ComponentBase* component = componentMap->at(componentTypeId).get();
-				component->MoveData(&archetype->componentArrays[i].componentData[lastEntityIndex * component->GetSize()],
-					&archetype->componentArrays[i].componentData[entityIndexB * component->GetSize()]);
-				component->DestroyData(&archetype->componentArrays[i].componentData[lastEntityIndex * component->GetSize()]);
-			}
-			archetype->entities.at(entityIndexB) = lastEntity;
-			archetype->entities.pop_back();
-			entityIndex->at(lastEntity).index = entityIndexB;
 		}
 
 		template<typename C, typename ...Args>
@@ -43,16 +29,40 @@ namespace  ant
 		}
 
 
-		void MoveComponent(Archetype* from, Archetype* to, size_t oldEntityIndex, size_t newComponentIndex, ComponentBase* component)
+		void MoveLastComponent(Archetype* archetype, size_t toIndex, size_t componentIndex, ComponentBase* component)
 		{
-			archetypeAllocator.AllocateSpaceIfNeeded(to, newComponentIndex, component);
-			size_t componentSize = component->GetSize();
-			size_t oldIndex = std::ranges::find(from->archetypeId.begin(), from->archetypeId.end(), component->GetTypeID()) - from->archetypeId.begin();
-			component->MoveData(&from->componentArrays[oldIndex].componentData[oldEntityIndex * componentSize],
-				&to->componentArrays[newComponentIndex].componentData[to->entities.size() * componentSize]);
+			MoveComponent(archetype, archetype, archetype->entities.size() - 1, toIndex, componentIndex, componentIndex, component);
 		}
 
+		
+		void MoveComponent(Archetype* from, Archetype* to, size_t fromIndex, size_t toIndex, size_t newComponentIndex,size_t oldComponentIndex, ComponentBase* component)
+		{
+			if (from != to) {
+				archetypeAllocator.AllocateSpaceIfNeeded(to, newComponentIndex, component);
+			}
+			size_t componentSize = component->GetSize();
+			component->MoveData(&from->componentArrays[oldComponentIndex].componentData[fromIndex * componentSize],
+				&to->componentArrays[newComponentIndex].componentData[toIndex * componentSize]);
+		}
 
+		void EraseComponent(Archetype* archetype, const size_t index, size_t ComponentIndex, ComponentBase* component)
+		{
+			component->DestroyData(&archetype->componentArrays[ComponentIndex].componentData[index * component->GetSize()]);
+		}
+		
+		template<typename ...Cs>
+		std::tuple<Cs&...> GetComponents(Archetype* archetype, size_t entityI)
+		{
+			return (std::tie((GetComponent<Cs>(archetype,entityI),...)));
+		}
+
+		template<typename C>
+		C& GetComponent(Archetype* archetype, size_t index)
+		{
+			const size_t componentIndex = std::ranges::find(archetype->archetypeId.begin(), archetype->archetypeId.end(), TypeIdGenerator::GetTypeID<C>()) - archetype->archetypeId.begin();
+			return reinterpret_cast<C&>(archetype->componentArrays[componentIndex].componentData[index * sizeof(C)]);
+		}
+	
 	private:
 		ArchetypeAllocator archetypeAllocator;
 		EntityIndex* entityIndex;

@@ -71,6 +71,12 @@ namespace ant {
 		template<typename ...Cs>
 		MultiView<Entity, Cs...> GetComponents(ChunkID chunkid = NULL_CHUNK);
 
+		/**
+		 * \brief Get all given Component from an entity
+		 * \tparam Cs ComponentTypes to retrieve
+		 * \param entity 
+		 * \return tuple of component refereces ;
+		 */
 		template<typename ...Cs>
 		std::tuple<Cs&...> GetEntityComponents(Entity entity);
 		
