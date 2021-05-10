@@ -14,7 +14,8 @@ namespace ant
 		virtual void MoveData(std::byte* source, std::byte* destination) const = 0;
 		virtual void ConstructData(std::byte* data) const = 0;
 
-		virtual std::size_t GetSize() const = 0;
+		virtual size_t GetSize() const = 0;
+		virtual std::byte* Allocate(size_t size) = 0;
 		virtual ComponentTypeID GetTypeID() = 0;
 	};
 
@@ -25,41 +26,13 @@ namespace ant
 	class Component : public ComponentBase
 	{
 	public:
-
-		struct Iterator
-		{
-			using iterator_category = std::forward_iterator_tag;
-			using difference_type = std::ptrdiff_t;
-			using value_type = C;
-			using pointer = C*;  // or also value_type*
-			using reference = C&;  // or also value_type&
-			
-			Iterator(pointer ptr) : m_ptr(ptr) {}
-
-
-			reference operator*() const { return *m_ptr; }
-			pointer operator->() { return m_ptr; }
-
-			// Prefix increment
-			Iterator& operator++() { m_ptr++; return *this; }
-
-			// Postfix increment
-			Iterator operator++(int) { Iterator tmp = *this; ++(*this); return tmp; }
-
-			friend bool operator== (const Iterator& a, const Iterator& b) { return a.m_ptr == b.m_ptr; };
-			friend bool operator!= (const Iterator& a, const Iterator& b) { return a.m_ptr != b.m_ptr; };
-		
-		private:
-
-			pointer m_ptr;
-		};
 		
 		void DestroyData(std::byte* data) const override;
 		void MoveData(std::byte* src, std::byte* dst) const override;
 		void ConstructData(std::byte* data) const override;
 		size_t GetSize() const override;
 		ComponentTypeID GetTypeID() override;
-		
+		std::byte* Allocate(size_t size) override;
 	};
 
 	template<class C>
@@ -93,5 +66,11 @@ namespace ant
 	{
 		return static_cast<ComponentTypeID>(TypeIdGenerator::GetTypeID<C>());
 	}
-	
+
+	template <class C>
+	std::byte* Component<C>::Allocate(size_t size)
+	{
+		alignas(C) std::byte* componentData = new std::byte[size];
+		return componentData;
+	}
 }
