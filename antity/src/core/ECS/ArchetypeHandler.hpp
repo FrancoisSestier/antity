@@ -50,6 +50,18 @@ namespace  ant
 			component->DestroyData(&archetype->componentArrays[ComponentIndex].componentData[index * component->GetSize()]);
 		}
 		
+		void CleanArchetype(Archetype* archetype){
+			
+			for(int j =0; j < archetype->componentArrays.size()){
+				auto component = componentMap.at(archetype->archetypeID[i])
+				for(int i = 0; i < archetype->entities.size();i++){
+					component->DestroyData(&archetype->componentArrays[ComponentIndex].componentData[index * component->GetSize()]);
+				}
+				delete [] archetype->componentArrays[j].componentData;
+				archetype->componentArrats[j].size = 0;
+			}			
+		}
+		
 		template<typename ...Cs>
 		std::tuple<Cs&...> GetComponents(Archetype* archetype, size_t entityI)
 		{
