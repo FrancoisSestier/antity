@@ -25,14 +25,22 @@ namespace ant {
 		{
 		}
 
+		~Registry()
+		{
+			for(auto&& it : *archetypeMap.get())
+			{
+				archetypeHandler.CleanArchetypeComponentArrays(it.second.get());
+			}
+		}
+		
 		/**
 		 * \brief Add Entity to the internal indexer
 		 * \return created EntityID
 		 */
-		Entity CreateEntity()
+		Entity CreateEntity(ChunkID chunkId = 0)
 		{
 			Entity entity = entityIdDispenser.GetID();
-			entityIndex->emplace(entity, Record{ nullptr,0 });
+			entityIndex->emplace(entity, Record{ nullptr,0,chunkId });
 			return entity;
 		}
 
@@ -51,7 +59,7 @@ namespace ant {
 		 * \param args Component arguments
 		 */
 		template<typename C, typename ...Args>
-		void AddComponent(Entity entity, ChunkID chunkId = NULL_CHUNK,Args... args);
+		void AddComponent(Entity entity,Args... args);
 
 		template<typename C>
 		void RemoveComponent(Entity entity);
@@ -96,9 +104,16 @@ namespace ant {
 
 
 	template <typename C, typename ... Args>
-	void Registry::AddComponent(Entity entity,ChunkID chunkId,Args... args)
+	void Registry::AddComponent(Entity entity,Args... args)
 	{
 		if(!entityIndex->contains(entity))
+		{
+			throw std::runtime_error("unregisterd entity");
+			
+		}
+		ComponentTypeID newComponentTypeId = TypeIdGenerator::GetTypeID<C>();
+
+		if(!componentMap->contains(newComponentTypeId))
 		{
 			RegisterComponent<C>();
 		}
@@ -108,25 +123,20 @@ namespace ant {
 		Archetype* oldArchetype = record.archetype;
 		Archetype* newArchetype;
 
-		ComponentTypeID newComponentTypeId = TypeIdGenerator::GetTypeID<C>();
 		
 		if (oldArchetype == nullptr)
 		{
 			newArchetype = archetypeMap.GetArchetype(
-				ArchetypeKey{ ArchetypeID{newComponentTypeId},chunkId });
+				ArchetypeKey{ ArchetypeID{newComponentTypeId},record.chunkId });
 			ComponentBase* component = componentMap->at(newComponentTypeId).get();
 			archetypeHandler.EmplaceComponent<C>(entity, newArchetype, component, 0, std::forward<Args>(args)...);
 		} else
 		{
-			if(chunkId == NULL_CHUNK)
-			{
-				chunkId = oldArchetype->chunkId;
-			}
 			ArchetypeID oldArchetypeID = oldArchetype->archetypeId;
 			ArchetypeID newArchetypeId = oldArchetypeID;
 			newArchetypeId.push_back(newComponentTypeId);
 			std::ranges::sort(newArchetypeId);
-			newArchetype = archetypeMap.GetArchetype(ArchetypeKey{ newArchetypeId,chunkId });
+			newArchetype = archetypeMap.GetArchetype(ArchetypeKey{ newArchetypeId,record.chunkId });
 			const size_t oldIndex = record.index;
 			const size_t LastEntityIndex = oldArchetype->entities.size()-1;
 			int oldCompIndex = 0;
@@ -139,11 +149,10 @@ namespace ant {
 					archetypeHandler.EmplaceComponent<C>(entity, newArchetype, component,i,std::forward<Args>(args)...);
 					continue;
 				}
-				archetypeHandler.MoveComponent(oldArchetype, newArchetype, oldIndex, newArchetype->entities.size(),i , oldCompIndex, component);
+				archetypeHandler.MoveComponent(oldArchetype, newArchetype, oldIndex, newArchetype->entities.size(),oldCompIndex , i, component);
 				if (LastEntityIndex != oldIndex) {
 					archetypeHandler.MoveLastComponent(oldArchetype, oldIndex, oldCompIndex, component);
 				}
-				archetypeHandler.EraseComponent(oldArchetype, LastEntityIndex,oldCompIndex, component);
 				oldCompIndex ++ ;
 			}
 			if (LastEntityIndex != oldIndex) {
@@ -152,6 +161,11 @@ namespace ant {
 				entityIndex->at(lastEntity).index = oldIndex;
 			}
 			oldArchetype->entities.pop_back();
+			if(oldArchetype->entities.empty())
+			{
+				archetypeHandler.CleanArchetypeComponentArrays(oldArchetype);
+				archetypeMap.DeleteArchetype(ArchetypeKey{ oldArchetype->archetypeId,oldArchetype->chunkId });
+			}
 				
 		}
 
@@ -164,9 +178,9 @@ namespace ant {
 	void Registry::RemoveComponent(Entity entity)
 	{
 		const Record record = entityIndex->at(entity);
-		/*
+		
 		Archetype* oldArchetype = record.archetype;
-		Archetype* newArchetype;
+		Archetype* newArchetype = nullptr;
 		ComponentTypeID componentToRemoveTypeId = TypeIdGenerator::GetTypeID<C>();
 		ArchetypeID newArchetypeID = oldArchetype->archetypeId;
 		auto componentToRemove = std::ranges::find(newArchetypeID.begin(), newArchetypeID.end(), componentToRemoveTypeId);
@@ -174,29 +188,41 @@ namespace ant {
 		newArchetypeID.erase(componentToRemove);
 		const size_t oldIndex = record.index;
 		const size_t LastEntityIndex = oldArchetype->entities.size() - 1;
-		if(newArchetypeID.size() != 0)
+		if (newArchetypeID.size() != 0)
 		{
 			newArchetype = archetypeMap.GetArchetype(ArchetypeKey{ newArchetypeID, oldArchetype->chunkId });
-			int c = 0;
-			for (int i = 0; i < oldArchetype->componentArrays.size(); i++)
+			entityIndex->at(entity).archetype = newArchetype;
+			entityIndex->at(entity).index = newArchetype->entities.size();
+			newArchetype->entities.push_back(entity);
+		}
+		int c = 0;
+		for (int i = 0; i < oldArchetype->componentArrays.size(); i++)
+		{
+			ComponentBase* component = componentMap->at(oldArchetype->archetypeId.at(i)).get();
+			if(i != componentToRemoveIndex && newArchetypeID.size() != 0)
 			{
-				if(i != componentToRemoveIndex)
-				{
-					auto comp = componentMap->at(oldArchetype->archetypeId.at(i)).get();
-					archetypeHandler.MoveComponent(oldArchetype, newArchetype, oldIndex, c, comp);
-					if (LastEntityIndex != oldIndex) {
-						archetypeHandler.(oldArchetype, oldArchetype, LastEntityIndex, oldIndex, component);
-					}
-					archetypeHandler.EraseComponent(oldArchetype, LastEntityIndex, i, component);
-					c++;
-				}
-				
+				archetypeHandler.MoveComponent(oldArchetype, newArchetype, oldIndex, newArchetype->entities.size() - 1, i, c, component);
+				c++;
+			} else
+			{
+				archetypeHandler.EraseComponent(oldArchetype, oldIndex, i, component);
+			}
+			if (LastEntityIndex != oldIndex) {
+				archetypeHandler.MoveLastComponent(oldArchetype, oldIndex, i, component);
 			}
 		}
-		*/
-		
+		if (LastEntityIndex != oldIndex) {
+			const Entity lastEntity = oldArchetype->entities.at(LastEntityIndex);
+			oldArchetype->entities.at(oldIndex) = lastEntity;
+			entityIndex->at(lastEntity).index = oldIndex;
+		}
+		oldArchetype->entities.pop_back();
 
-		
+		if(oldArchetype->entities.empty())
+		{
+			archetypeHandler.CleanArchetypeComponentArrays(oldArchetype);
+			archetypeMap.DeleteArchetype(ArchetypeKey{ oldArchetype->archetypeId,oldArchetype->chunkId });
+		}
 	}
 
 	template <typename C>
@@ -221,7 +247,7 @@ namespace ant {
 		}
 		componentMap->emplace(componentTypeId, std::make_unique<Component<C>>());
 		registryDebugger.OnComponentRegistration<C>();
-		archetypeMap.OnComponentRegistration(componentTypeId);
+		archetypeMap.OnComponentRegistration(TypeIdGenerator::GetTypeID<C>());
 	}
 
 	template <typename ... Cs>
