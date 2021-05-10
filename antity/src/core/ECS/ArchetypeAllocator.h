@@ -6,36 +6,77 @@ namespace ant
 {
 	class ArchetypeAllocator {
 	public:
-		void AllocateSpaceIfNeeded(Archetype* archetype, size_t componentIndex, ComponentBase* component)
+
+		
+		/**
+		 * \brief Allocate memory if needed exponential allocation
+		 * \param archetype 
+		 * \param componentIndex 
+		 * \param component 
+		 */
+		void AutoAllocate(Archetype* archetype, size_t componentIndex, ComponentBase* component)
 		{
-			if (NeedSpace(archetype, componentIndex, component->GetSize()))
+			if (NeedsSpace(archetype, componentIndex, component->GetSize()))
 			{
 				DoubleAllocation(archetype, componentIndex, component);
 			}
 		}
+
+		/**
+		 * \brief 
+		 * \param archetype DeAllocate memory if too much is allocated
+		 * \param componentIndex 
+		 * \param component 
+		 */
+		void AutoShrink(Archetype* archetype, size_t componentIndex, ComponentBase* component)
+		{
+			if (NeedsShriking(archetype, componentIndex, component->GetSize()))
+			{
+				ShrinkToFit(archetype, componentIndex, component);
+			}
+		}
 		
 	private:
+		
 		void DoubleAllocation(Archetype* archetype, size_t componentIndex, ComponentBase* component)
 		{
-			size_t size = component->GetSize();
-			archetype->componentArrays.at(componentIndex).size = archetype->componentArrays.at(componentIndex).size * 2 + component->GetSize();
-			auto* newData = new std::byte[archetype->componentArrays.at(componentIndex).size];
-			for (std::size_t e = 0; e < archetype->entities.size(); ++e)
-			{
-				component->MoveData(&archetype->componentArrays[componentIndex].componentData[e * size],
-					&newData[e * size]);
-				component->DestroyData(&archetype->componentArrays[componentIndex].componentData[e * size]);
-			}
-			delete[] archetype->componentArrays[componentIndex].componentData;
-
-			archetype->componentArrays[componentIndex].componentData = newData;
+			auto newSize = archetype->componentArrays.at(componentIndex).size * 2 + component->GetSize();
+			Resize(archetype, componentIndex, component, newSize);
 		}
 
-		bool NeedSpace(Archetype* archetype, size_t componentIndex, size_t componentSize)
+		void ShrinkToFit(Archetype* archetype, size_t componentIndex, ComponentBase* component)
 		{
-			size_t currentSize = archetype->componentArrays.at(componentIndex).size;
-			size_t newSize = archetype->entities.size() * componentSize + componentSize;
-			return newSize > currentSize;
+			auto newSize = archetype->entities.size() * component->GetSize();
+			Resize(archetype, componentIndex, component, newSize);
+		}
+
+		void Resize(Archetype* archetype, size_t componentIndex, ComponentBase* component,size_t newSize)
+		{
+			size_t componentSize = component->GetSize();
+			auto* newData = component->Allocate(newSize);
+			for (std::size_t e = 0; e < archetype->entities.size(); ++e)
+			{
+				component->MoveData(&archetype->componentArrays[componentIndex].componentData[e * componentSize],
+					&newData[e * componentSize]);
+				component->DestroyData(&archetype->componentArrays[componentIndex].componentData[e * componentSize]);
+			}
+			delete[] archetype->componentArrays[componentIndex].componentData;
+			archetype->componentArrays.at(componentIndex).size = newSize;
+			archetype->componentArrays[componentIndex].componentData = newData;
+		}
+		
+		bool NeedsSpace(Archetype* archetype, size_t componentIndex, size_t componentSize)
+		{
+			size_t allocated = archetype->componentArrays.at(componentIndex).size;
+			size_t needed = archetype->entities.size() * componentSize + componentSize;
+			return needed > allocated;
+		}
+
+		bool NeedsShriking(Archetype* archetype, size_t componentIndex, size_t componentSize)
+		{
+			size_t allocated = archetype->componentArrays.at(componentIndex).size;
+			size_t used = archetype->entities.size() * componentSize;
+			return allocated > used/2;
 		}
 
 	};
