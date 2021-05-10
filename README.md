@@ -3,7 +3,12 @@ Open Source Archetype and Chunk Based Lightweight Entity Component System with s
 
 ## Motivation
 orignally implemented this ecs for my game engine. because i needed chunks to be at the core of the entity component system.
-All simillar archetypes divided in as many chunk as you want. GetComponent method can take a ChunkID as parameter. 
+
+## ECS Design
+The Design is based on archetypes. Archetypes are a collection of Component types. 
+All simillar Archetypes can be divided in as many chunks as you want. GetComponent method can take a ChunkID as parameter. 
+Two entities that have the same collection of components and the same chunkID will be stored in the same archetype. 
+All entities in the same archetype are guarenteed to have their components stored in contiguous arrays respecting memory alignement. 
 
 ## Usage Design 
 The API is as simple as it can be :
