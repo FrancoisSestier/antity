@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Dev\ant\test\build\CMakeFiles\6d3ac4df2040cecc6283711e46bc31df\format.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Dev\ant\test\build\_deps\format.cmake-src\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Dev\ant\test\build\_deps\format.cmake-build\CMakeFiles\format" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{38BA8F3F-C512-3B25-9BFF-4BCDE23EFA64}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Dev\ant\test\build\_deps\antity-subbuild\CMakeFiles\0615f74cd56910cfa2ff1144800b7934\antity-populate-mkdir.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Dev\ant\test\build\_deps\antity-subbuild\CMakeFiles\0615f74cd56910cfa2ff1144800b7934\antity-populate-download.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Dev\ant\test\build\_deps\antity-subbuild\CMakeFiles\0615f74cd56910cfa2ff1144800b7934\antity-populate-update.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Dev\ant\test\build\_deps\antity-subbuild\CMakeFiles\0615f74cd56910cfa2ff1144800b7934\antity-populate-patch.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Dev\ant\test\build\_deps\antity-subbuild\CMakeFiles\0615f74cd56910cfa2ff1144800b7934\antity-populate-configure.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Dev\ant\test\build\_deps\antity-subbuild\CMakeFiles\0615f74cd56910cfa2ff1144800b7934\antity-populate-build.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Dev\ant\test\build\_deps\antity-subbuild\CMakeFiles\0615f74cd56910cfa2ff1144800b7934\antity-populate-install.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Dev\ant\test\build\_deps\antity-subbuild\CMakeFiles\0615f74cd56910cfa2ff1144800b7934\antity-populate-test.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Dev\ant\test\build\_deps\antity-subbuild\CMakeFiles\8504b58498f98b678b2a144962064a66\antity-populate-complete.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Dev\ant\test\build\_deps\antity-subbuild\CMakeFiles\d78c433f636dbf4b609b819ff2ecc99a\antity-populate.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Dev\ant\test\build\_deps\antity-subbuild\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Dev\ant\test\build\_deps\antity-subbuild\CMakeFiles\antity-populate" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{8AF01143-0CBE-371E-BB00-C8CEAD43B0B8}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

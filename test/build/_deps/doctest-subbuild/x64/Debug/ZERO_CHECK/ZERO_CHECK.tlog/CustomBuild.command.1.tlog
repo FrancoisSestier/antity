@@ -1,0 +1,10 @@
+^C:\DEV\ANT\TEST\BUILD\_DEPS\DOCTEST-SUBBUILD\CMAKEFILES\62630CB7876805264131113A74FD0BC9\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Dev/ant/test/build/_deps/doctest-subbuild -BC:/Dev/ant/test/build/_deps/doctest-subbuild --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file C:/Dev/ant/test/build/_deps/doctest-subbuild/doctest-populate.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

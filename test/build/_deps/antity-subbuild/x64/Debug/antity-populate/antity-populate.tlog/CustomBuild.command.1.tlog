@@ -1,0 +1,156 @@
+^C:\DEV\ANT\TEST\BUILD\_DEPS\ANTITY-SUBBUILD\CMAKEFILES\0615F74CD56910CFA2FF1144800B7934\ANTITY-POPULATE-MKDIR.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory C:/Dev/ant/test/..
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory C:/Dev/ant/test/build/_deps/antity-build
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory C:/Dev/ant/test/build/_deps/antity-subbuild/antity-populate-prefix
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory C:/Dev/ant/test/build/_deps/antity-subbuild/antity-populate-prefix/tmp
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory C:/Dev/ant/test/build/_deps/antity-subbuild/antity-populate-prefix/src/antity-populate-stamp/Debug
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory C:/Dev/ant/test/build/_deps/antity-subbuild/antity-populate-prefix/src
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory C:/Dev/ant/test/build/_deps/antity-subbuild/antity-populate-prefix/src/antity-populate-stamp
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E touch C:/Dev/ant/test/build/_deps/antity-subbuild/antity-populate-prefix/src/antity-populate-stamp/Debug/antity-populate-mkdir
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\DEV\ANT\TEST\BUILD\_DEPS\ANTITY-SUBBUILD\CMAKEFILES\0615F74CD56910CFA2FF1144800B7934\ANTITY-POPULATE-DOWNLOAD.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E echo_append
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E touch C:/Dev/ant/test/build/_deps/antity-subbuild/antity-populate-prefix/src/antity-populate-stamp/Debug/antity-populate-download
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\DEV\ANT\TEST\BUILD\_DEPS\ANTITY-SUBBUILD\CMAKEFILES\0615F74CD56910CFA2FF1144800B7934\ANTITY-POPULATE-UPDATE.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E echo_append
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E touch C:/Dev/ant/test/build/_deps/antity-subbuild/antity-populate-prefix/src/antity-populate-stamp/Debug/antity-populate-update
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\DEV\ANT\TEST\BUILD\_DEPS\ANTITY-SUBBUILD\CMAKEFILES\0615F74CD56910CFA2FF1144800B7934\ANTITY-POPULATE-PATCH.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E echo_append
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E touch C:/Dev/ant/test/build/_deps/antity-subbuild/antity-populate-prefix/src/antity-populate-stamp/Debug/antity-populate-patch
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\DEV\ANT\TEST\BUILD\_DEPS\ANTITY-SUBBUILD\CMAKEFILES\0615F74CD56910CFA2FF1144800B7934\ANTITY-POPULATE-CONFIGURE.RULE
+setlocal
+cd C:\Dev\ant\test\build\_deps\antity-build
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E echo_append
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E touch C:/Dev/ant/test/build/_deps/antity-subbuild/antity-populate-prefix/src/antity-populate-stamp/Debug/antity-populate-configure
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\DEV\ANT\TEST\BUILD\_DEPS\ANTITY-SUBBUILD\CMAKEFILES\0615F74CD56910CFA2FF1144800B7934\ANTITY-POPULATE-BUILD.RULE
+setlocal
+cd C:\Dev\ant\test\build\_deps\antity-build
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E echo_append
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E touch C:/Dev/ant/test/build/_deps/antity-subbuild/antity-populate-prefix/src/antity-populate-stamp/Debug/antity-populate-build
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\DEV\ANT\TEST\BUILD\_DEPS\ANTITY-SUBBUILD\CMAKEFILES\0615F74CD56910CFA2FF1144800B7934\ANTITY-POPULATE-INSTALL.RULE
+setlocal
+cd C:\Dev\ant\test\build\_deps\antity-build
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E echo_append
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E touch C:/Dev/ant/test/build/_deps/antity-subbuild/antity-populate-prefix/src/antity-populate-stamp/Debug/antity-populate-install
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\DEV\ANT\TEST\BUILD\_DEPS\ANTITY-SUBBUILD\CMAKEFILES\0615F74CD56910CFA2FF1144800B7934\ANTITY-POPULATE-TEST.RULE
+setlocal
+cd C:\Dev\ant\test\build\_deps\antity-build
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E echo_append
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E touch C:/Dev/ant/test/build/_deps/antity-subbuild/antity-populate-prefix/src/antity-populate-stamp/Debug/antity-populate-test
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\DEV\ANT\TEST\BUILD\_DEPS\ANTITY-SUBBUILD\CMAKEFILES\8504B58498F98B678B2A144962064A66\ANTITY-POPULATE-COMPLETE.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory C:/Dev/ant/test/build/_deps/antity-subbuild/CMakeFiles/Debug
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E touch C:/Dev/ant/test/build/_deps/antity-subbuild/CMakeFiles/Debug/antity-populate-complete
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E touch C:/Dev/ant/test/build/_deps/antity-subbuild/antity-populate-prefix/src/antity-populate-stamp/Debug/antity-populate-done
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\DEV\ANT\TEST\BUILD\_DEPS\ANTITY-SUBBUILD\CMAKEFILES\D78C433F636DBF4B609B819FF2ECC99A\ANTITY-POPULATE.RULE
+setlocal
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\DEV\ANT\TEST\BUILD\_DEPS\ANTITY-SUBBUILD\CMAKELISTS.TXT
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Dev/ant/test/build/_deps/antity-subbuild -BC:/Dev/ant/test/build/_deps/antity-subbuild --check-stamp-file C:/Dev/ant/test/build/_deps/antity-subbuild/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

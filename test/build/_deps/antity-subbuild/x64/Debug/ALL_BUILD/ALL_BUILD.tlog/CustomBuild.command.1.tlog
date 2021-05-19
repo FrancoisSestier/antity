@@ -1,0 +1,10 @@
+^C:\DEV\ANT\TEST\BUILD\_DEPS\ANTITY-SUBBUILD\CMAKELISTS.TXT
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Dev/ant/test/build/_deps/antity-subbuild -BC:/Dev/ant/test/build/_deps/antity-subbuild --check-stamp-file C:/Dev/ant/test/build/_deps/antity-subbuild/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

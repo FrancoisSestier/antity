@@ -1,0 +1,46 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "C:/Dev/ant/test/build/_deps/format.cmake-subbuild/CMakeFiles/format.cmake-populate"
+		},
+		{
+			"file" : "C:/Dev/ant/test/build/_deps/format.cmake-subbuild/CMakeFiles/d2f902800e808fab2c1064c5cd5c5a88/format.cmake-populate.rule"
+		},
+		{
+			"file" : "C:/Dev/ant/test/build/_deps/format.cmake-subbuild/CMakeFiles/4efff8e3237dcb4ac673146a8b0ffff3/format.cmake-populate-complete.rule"
+		},
+		{
+			"file" : "C:/Dev/ant/test/build/_deps/format.cmake-subbuild/CMakeFiles/80cd26df975cc45c5094159096f66dfb/format.cmake-populate-build.rule"
+		},
+		{
+			"file" : "C:/Dev/ant/test/build/_deps/format.cmake-subbuild/CMakeFiles/80cd26df975cc45c5094159096f66dfb/format.cmake-populate-configure.rule"
+		},
+		{
+			"file" : "C:/Dev/ant/test/build/_deps/format.cmake-subbuild/CMakeFiles/80cd26df975cc45c5094159096f66dfb/format.cmake-populate-download.rule"
+		},
+		{
+			"file" : "C:/Dev/ant/test/build/_deps/format.cmake-subbuild/CMakeFiles/80cd26df975cc45c5094159096f66dfb/format.cmake-populate-install.rule"
+		},
+		{
+			"file" : "C:/Dev/ant/test/build/_deps/format.cmake-subbuild/CMakeFiles/80cd26df975cc45c5094159096f66dfb/format.cmake-populate-mkdir.rule"
+		},
+		{
+			"file" : "C:/Dev/ant/test/build/_deps/format.cmake-subbuild/CMakeFiles/80cd26df975cc45c5094159096f66dfb/format.cmake-populate-patch.rule"
+		},
+		{
+			"file" : "C:/Dev/ant/test/build/_deps/format.cmake-subbuild/CMakeFiles/80cd26df975cc45c5094159096f66dfb/format.cmake-populate-test.rule"
+		},
+		{
+			"file" : "C:/Dev/ant/test/build/_deps/format.cmake-subbuild/CMakeFiles/80cd26df975cc45c5094159096f66dfb/format.cmake-populate-update.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"format.cmake-populate"
+		],
+		"name" : "format.cmake-populate"
+	}
+}

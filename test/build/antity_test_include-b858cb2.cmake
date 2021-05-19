@@ -1,0 +1,5 @@
+if(EXISTS "C:/Dev/ant/test/build/antity_test_tests-b858cb2.cmake")
+  include("C:/Dev/ant/test/build/antity_test_tests-b858cb2.cmake")
+else()
+  add_test(antity_test_NOT_BUILT-b858cb2 antity_test_NOT_BUILT-b858cb2)
+endif()

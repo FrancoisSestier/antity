@@ -1,0 +1,10 @@
+^C:\DEV\ANT\TEST\BUILD\_DEPS\FORMAT.CMAKE-SUBBUILD\CMAKEFILES\D2F902800E808FAB2C1064C5CD5C5A88\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Dev/ant/test/build/_deps/format.cmake-subbuild -BC:/Dev/ant/test/build/_deps/format.cmake-subbuild --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file C:/Dev/ant/test/build/_deps/format.cmake-subbuild/format.cmake-populate.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

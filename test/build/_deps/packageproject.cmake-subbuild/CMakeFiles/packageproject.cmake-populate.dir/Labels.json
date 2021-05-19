@@ -1,0 +1,46 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "C:/Dev/ant/test/build/_deps/packageproject.cmake-subbuild/CMakeFiles/packageproject.cmake-populate"
+		},
+		{
+			"file" : "C:/Dev/ant/test/build/_deps/packageproject.cmake-subbuild/CMakeFiles/5c7dbaa70f75e1b0834159788493b394/packageproject.cmake-populate.rule"
+		},
+		{
+			"file" : "C:/Dev/ant/test/build/_deps/packageproject.cmake-subbuild/CMakeFiles/3ebfb2f96af4fa0b13e75c53ec06d163/packageproject.cmake-populate-complete.rule"
+		},
+		{
+			"file" : "C:/Dev/ant/test/build/_deps/packageproject.cmake-subbuild/CMakeFiles/858b99351b812e35a726152436bbcba5/packageproject.cmake-populate-build.rule"
+		},
+		{
+			"file" : "C:/Dev/ant/test/build/_deps/packageproject.cmake-subbuild/CMakeFiles/858b99351b812e35a726152436bbcba5/packageproject.cmake-populate-configure.rule"
+		},
+		{
+			"file" : "C:/Dev/ant/test/build/_deps/packageproject.cmake-subbuild/CMakeFiles/858b99351b812e35a726152436bbcba5/packageproject.cmake-populate-download.rule"
+		},
+		{
+			"file" : "C:/Dev/ant/test/build/_deps/packageproject.cmake-subbuild/CMakeFiles/858b99351b812e35a726152436bbcba5/packageproject.cmake-populate-install.rule"
+		},
+		{
+			"file" : "C:/Dev/ant/test/build/_deps/packageproject.cmake-subbuild/CMakeFiles/858b99351b812e35a726152436bbcba5/packageproject.cmake-populate-mkdir.rule"
+		},
+		{
+			"file" : "C:/Dev/ant/test/build/_deps/packageproject.cmake-subbuild/CMakeFiles/858b99351b812e35a726152436bbcba5/packageproject.cmake-populate-patch.rule"
+		},
+		{
+			"file" : "C:/Dev/ant/test/build/_deps/packageproject.cmake-subbuild/CMakeFiles/858b99351b812e35a726152436bbcba5/packageproject.cmake-populate-test.rule"
+		},
+		{
+			"file" : "C:/Dev/ant/test/build/_deps/packageproject.cmake-subbuild/CMakeFiles/858b99351b812e35a726152436bbcba5/packageproject.cmake-populate-update.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"packageproject.cmake-populate"
+		],
+		"name" : "packageproject.cmake-populate"
+	}
+}
