@@ -9,7 +9,7 @@ option(TEST_INSTALLED_VERSION "Test the version found by find_package" OFF)
 
 include(../cmake/CPM.cmake)
 
-CPMAddPackage("gh:google/googletest#f5e592d8ee5ffb1d9af5be7f715ce3576b8bf9c4")
+CPMAddPackage("gh:google/googletest#eb6e9273dcf9c6535abb45306afe558aa961e3c3")
 CPMAddPackage("gh:TheLartians/Format.cmake@1.7.0")
 
 if (TEST_INSTALLED_VERSION)
@@ -24,9 +24,7 @@ endif()
 file(GLOB_RECURSE sources CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
 
 add_executable(antity_test ${sources})
-
 target_link_libraries(antity_test GTest::gtest antity)
-
 set_target_properties(antity_test PROPERTIES CXX_STANDARD 20)
 
 enable_testing()
