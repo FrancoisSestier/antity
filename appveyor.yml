@@ -9,5 +9,5 @@ build_script:
   - cmake --build build/test
   
 test_script:
-  - cd build/test/Debug
-  - antity_test.exe
+  - cd build/test
+  - ctest --build-config Debug
