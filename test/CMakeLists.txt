@@ -8,8 +8,8 @@ option(ENABLE_TEST_COVERAGE "Enable test coverage" OFF)
 option(TEST_INSTALLED_VERSION "Test the version found by find_package" OFF)
 
 include(../cmake/CPM.cmake)
+find_package(Threads REQUIRED)
 
-CPMAddPackage("gh:google/googletest#eb6e9273dcf9c6535abb45306afe558aa961e3c3")
 CPMAddPackage("gh:TheLartians/Format.cmake@1.7.0")
 
 if (TEST_INSTALLED_VERSION)
@@ -21,18 +21,27 @@ else()
   )
 endif()
 
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  # Specify the commit you depend on and update it regularly.
+  URL https://github.com/google/googletest/archive/609281088cfefc76f9d0ce82e1ff6c30cc3591e5.zip
+)
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+
+FetchContent_MakeAvailable(googletest)
+
 file(GLOB_RECURSE sources CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
 
-add_executable(antity_test ${sources})
-target_link_libraries(antity_test GTest::gtest antity)
-set_target_properties(antity_test PROPERTIES CXX_STANDARD 20)
-
 enable_testing()
-
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+add_executable(antity_test ${sources})
+target_link_libraries(antity_test gtest_main antity)
+set_target_properties(antity_test PROPERTIES CXX_STANDARD 20)
 
 include(GoogleTest)
 gtest_discover_tests(antity_test)
+
+
 
 if (ENABLE_TEST_COVERAGE)
   target_compile_options(antity INTERFACE -O0 -g -fprofile-arcs -ftest-coverage)
