@@ -1,0 +1,11 @@
+environment:
+  - gen: "Visual Studio 16 2019"
+    APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+    
+build_script:
+  - cmake --version
+  - cmake -S test -B build/test
+  - cmake --build build/test
+  
+test_script:
+  - ./build/test/debug/antity_test
