@@ -1,3 +1,5 @@
-Debug/*
-antity.sln
-.vs/*
+/build*
+/.vscode
+/.vs
+.DS_Store
+.github
