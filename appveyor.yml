@@ -1,4 +1,5 @@
 environment:
+  matrix:
   - gen: "Visual Studio 16 2019"
     APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
     
