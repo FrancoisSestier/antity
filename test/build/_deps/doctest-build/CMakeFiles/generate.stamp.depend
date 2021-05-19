@@ -1,7 +1,0 @@
-# CMake generation dependency list for this directory.
-C:/Dev/ant/test/build/CMakeFiles/cmake.verify_globs
-C:/Dev/ant/test/build/_deps/doctest-src/CMakeLists.txt
-C:/Dev/ant/test/build/_deps/doctest-src/scripts/cmake/Config.cmake.in
-C:/Program Files/CMake/share/cmake-3.20/Modules/BasicConfigVersion-SameMajorVersion.cmake.in
-C:/Program Files/CMake/share/cmake-3.20/Modules/CMakePackageConfigHelpers.cmake
-C:/Program Files/CMake/share/cmake-3.20/Modules/WriteBasicConfigVersionFile.cmake

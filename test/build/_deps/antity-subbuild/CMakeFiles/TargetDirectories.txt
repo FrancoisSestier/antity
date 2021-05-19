@@ -1,3 +1,0 @@
-C:/Dev/ant/test/build/_deps/antity-subbuild/CMakeFiles/antity-populate.dir
-C:/Dev/ant/test/build/_deps/antity-subbuild/CMakeFiles/ALL_BUILD.dir
-C:/Dev/ant/test/build/_deps/antity-subbuild/CMakeFiles/ZERO_CHECK.dir

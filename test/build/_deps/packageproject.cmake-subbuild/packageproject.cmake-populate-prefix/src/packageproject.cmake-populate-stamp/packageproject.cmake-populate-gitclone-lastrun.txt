@@ -1,3 +1,0 @@
-repository='https://github.com/TheLartians/PackageProject.cmake.git'
-module=''
-tag='origin'
