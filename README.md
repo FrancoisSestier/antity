@@ -47,12 +47,10 @@ int main(){
 
 	//Systems
 	const auto deltaTime = .001f
-	while(true){
-		for(auto [entity, pos ,speed] : reg.GetComponents<Position,Speed>){
-			pos.x += speed.x * deltaTime;		
-			pos.y += speed.y * deltaTime;		
+	for(auto [entity, pos ,speed] : reg.GetComponents<Position,Speed>){
+		pos.x += speed.x * deltaTime;		
+		pos.y += speed.y * deltaTime;		
 
-		}
 	}
 
 }
