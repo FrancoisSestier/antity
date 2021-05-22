@@ -39,11 +39,11 @@ int main(){
 	Entity entity2 = reg.createEntity();
 
 	//Components
-	reg.AddComponents<Position>(entity1,{3,4});
-	reg.AddComponents<Speed>(entity1,{.1f,.0f});
+	reg.AddComponent<Position>(entity1,{3,4});
+	reg.AddComponent<Speed>(entity1,{.1f,.0f});
 	
-	reg.AddComponents<Position>(entity2,{3,4});
-	reg.AddComponents<Speed>(entity2,{.0f,.2f});
+	reg.AddComponent<Position>(entity2,{3,4});
+	reg.AddComponent<Speed>(entity2,{.0f,.2f});
 
 	//Systems
 	const auto deltaTime = .001f
