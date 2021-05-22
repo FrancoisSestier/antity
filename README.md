@@ -1,4 +1,4 @@
-# Antity [![Windows](https://github.com/FrancoisSestier/antity/actions/workflows/windows.yml/badge.svg)](https://github.com/FrancoisSestier/antity/actions/workflows/windows.yml) [![Ubuntu](https://github.com/FrancoisSestier/antity/actions/workflows/ubuntu.yml/badge.svg)](https://github.com/FrancoisSestier/antity/actions/workflows/ubuntu.yml)
+# Antity [![Windows](https://github.com/FrancoisSestier/antity/actions/workflows/windows.yml/badge.svg)](https://github.com/FrancoisSestier/antity/actions/workflows/windows.yml) [![Ubuntu](https://github.com/FrancoisSestier/antity/actions/workflows/ubuntu.yml/badge.svg)](https://github.com/FrancoisSestier/antity/actions/workflows/ubuntu.yml) [![codecov](https://codecov.io/gh/FrancoisSestier/antity/branch/master/graph/badge.svg?token=ZPDP1TAO3Z)](https://codecov.io/gh/FrancoisSestier/antity)
 Open Source Archetype and Chunk Based Lightweight Entity Component System with straighforward api design
 
 ## Motivation
