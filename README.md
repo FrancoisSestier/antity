@@ -41,7 +41,7 @@ int main(){
 	reg.AddComponents<Speed>(entity2,{.1f,.0f});
 	
 	reg.AddComponents<Position>(entity2,{3,4});
-	reg.AddComponents<Speed>(entity2,Posiion{.0f,.2f});
+	reg.AddComponents<Speed>(entity2,{.0f,.2f});
 
 	//Systems
 	const auto deltaTime = .001f
