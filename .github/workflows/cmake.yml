@@ -36,4 +36,5 @@ jobs:
           cd build
           ctest --build-config Debug
       - name: collect code coverage
-        run: curl -s https://codecov.io/bash
+        run: bash <(curl https://codecov.io/bash) -t CODECOV_TOKEN
+
