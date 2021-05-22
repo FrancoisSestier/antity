@@ -126,8 +126,8 @@ namespace ant
 
 			for (auto&& archetype : archetypes)
 			{
-				begins.emplace_back(Iterator<Entity>(archetype->entities.cbegin()._Ptr));
-				ends.emplace_back(Iterator<Entity>(archetype->entities.cend()._Ptr));
+				begins.emplace_back(Iterator<Entity>(&*(archetype->entities.cbegin())));
+				ends.emplace_back(Iterator<Entity>(&*(archetype->entities.cend())));
 			}
 			return View<Entity>(std::move(begins), std::move(ends));
 		}
