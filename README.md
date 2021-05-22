@@ -40,7 +40,7 @@ int main(){
 
 	//Components
 	reg.AddComponents<Position>(entity1,{3,4});
-	reg.AddComponents<Speed>(entity2,{.1f,.0f});
+	reg.AddComponents<Speed>(entity1,{.1f,.0f});
 	
 	reg.AddComponents<Position>(entity2,{3,4});
 	reg.AddComponents<Speed>(entity2,{.0f,.2f});
