@@ -1,4 +1,4 @@
-# Antity
+# Antity [![Windows](https://github.com/FrancoisSestier/antity/actions/workflows/windows.yml/badge.svg)](https://github.com/FrancoisSestier/antity/actions/workflows/windows.yml) [![Windows](https://github.com/FrancoisSestier/antity/actions/workflows/windows.yml/badge.svg)](https://github.com/FrancoisSestier/antity/actions/workflows/windows.yml)
 Open Source Archetype and Chunk Based Lightweight Entity Component System with straighforward api design
 
 ## Motivation
