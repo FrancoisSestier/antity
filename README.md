@@ -1,4 +1,4 @@
-# Antity [![Build status](https://ci.appveyor.com/api/projects/status/0w36w8dinv65k2gs/branch/master?svg=true)](https://ci.appveyor.com/project/FrancoisSestier/antity/branch/master)
+# Antity
 Open Source Archetype and Chunk Based Lightweight Entity Component System with straighforward api design
 
 ## Motivation
