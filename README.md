@@ -1,4 +1,5 @@
-# Antity
+# Antity 
+[![Tests status](https://appveyor-shields-badge.herokuapp.com/api/api/testResults/Naphtalene/antity/badge.svg)](https://ci.appveyor.com/project/<Naphtalene/antity)
 Open Source Archetype and Chunk Based Lightweight Entity Component System with straighforward api design
 
 ## Motivation
