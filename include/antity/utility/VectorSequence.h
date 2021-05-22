@@ -37,7 +37,7 @@ namespace ant
 	
 		using type = VectorZipper<Args...>;
 		using underlying_iterator = std::tuple<MultiIterator<Args, typename  std::vector<Args>::iterator>...>;
-		using iterator = typename  ZipIterator<std::tuple<MultiIterator<Args, typename  std::vector<Args>::iterator>...>, Args...>;
+		using iterator = ZipIterator<std::tuple<MultiIterator<Args, typename  std::vector<Args>::iterator>...>, Args...>;
 	
 		VectorZipper(underlying_iterator begins, underlying_iterator ends) : begins(begins),ends(ends){}
 
