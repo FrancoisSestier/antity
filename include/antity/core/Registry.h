@@ -244,6 +244,8 @@ namespace ant {
 	template <typename C>
 	void Registry::RegisterComponent()
 	{
+		static_assert(alignof(C) <= sizeof(C),"Align requirement of a component can not be superior to it's size" )
+
 		ComponentTypeID componentTypeId = static_cast<ComponentTypeID>(TypeIdGenerator::GetTypeID<C>());
 		if(componentMap->contains(componentTypeId))
 		{
