@@ -1,6 +1,8 @@
-# Antity [![Windows](https://github.com/FrancoisSestier/antity/actions/workflows/windows.yml/badge.svg)](https://github.com/FrancoisSestier/antity/actions/workflows/windows.yml) [![Ubuntu](https://github.com/FrancoisSestier/antity/actions/workflows/ubuntu.yml/badge.svg)](https://github.com/FrancoisSestier/antity/actions/workflows/ubuntu.yml) [![codecov](https://codecov.io/gh/FrancoisSestier/antity/branch/master/graph/badge.svg?token=ZPDP1TAO3Z)](https://codecov.io/gh/FrancoisSestier/antity) [![License: Unlicense](https://img.shields.io/badge/license-Unlicense-blue.svg)](http://unlicense.org/)
+[![Windows](https://github.com/FrancoisSestier/antity/actions/workflows/windows.yml/badge.svg)](https://github.com/FrancoisSestier/antity/actions/workflows/windows.yml) [![Ubuntu](https://github.com/FrancoisSestier/antity/actions/workflows/ubuntu.yml/badge.svg)](https://github.com/FrancoisSestier/antity/actions/workflows/ubuntu.yml) [![codecov](https://codecov.io/gh/FrancoisSestier/antity/branch/master/graph/badge.svg?token=ZPDP1TAO3Z)](https://codecov.io/gh/FrancoisSestier/antity) [![License: Unlicense](https://img.shields.io/badge/license-Unlicense-blue.svg)](http://unlicense.org/)
 
-![Logo](https://user-images.githubusercontent.com/17357315/119251805-ce998700-bba8-11eb-8150-f642ca16cab8.png)
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/17357315/119251805-ce998700-bba8-11eb-8150-f642ca16cab8.png)" height="175" width="auto" />
+</p>
 
 Open Source Archetype and Chunk Based Lightweight Entity Component System with straighforward api design
 
