@@ -59,8 +59,7 @@ int main(){
 }
 ```
 
-## What's forbidden
-For a given Component of type C, the following must be true alignof(C) <= sizeof(C). (i'm looking at a way to fix this)  
+## What's forbidden 
 During iteration over a View of component you can neither add components nor remove components.  
 Not following those rules will result in undefined behavior !  
 
