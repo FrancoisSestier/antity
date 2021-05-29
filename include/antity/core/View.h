@@ -1,136 +1,211 @@
 #pragma once
 #include "../utility/Iterator.h"
 #include "Archetype.h"
+#include "ComponentArray.h"
+#include "ArchetypeMap.h"
 
 namespace ant
 {
+	template<typename ...Cs>
+	class ArchetypeView final {
+
+		using component_arrays = std::tuple<ComponentArray<Cs>...>;
+
+		public:
+		class archetype_view_iterator final{
+		public:
+			using iterator_category = std::random_access_iterator_tag;
+			using difference_type = std::ptrdiff_t;
+			using value_type = std::tuple<Entity,Cs...>;
+			using pointer = std::tuple<Entity*,Cs*...>;
+			using reference = std::tuple<Entity&,Cs&...>;; 
+
+			archetype_view_iterator(size_t index, ArchetypeView<Cs...>* owner) :
+					index(index), owner(owner) {}
 
 
-	
-	/**
-	 * \brief Iterable Class of type T
-	 * \tparam T underlying_type of the iterator
-	 */
-	template<typename T>
-	class View
-	{
-		using underlying_iterator = Iterator<T>;
-		using iterator = MultiIterator < T, underlying_iterator>;
-		using underlying_type = T;
+
+ 			archetype_view_iterator & operator++() noexcept {
+        	    return ++index, *this;
+        	}
+
+        	archetype_view_iterator operator++(int) noexcept {
+        	    archetype_view_iterator tmp = *this;
+        	    return ++(*this), tmp;
+        	}
+
+        	archetype_view_iterator & operator--() noexcept {
+        	    return ++index, *this;
+        	}
+
+        	archetype_view_iterator operator--(int) noexcept {
+        	    archetype_view_iterator tmp = *this;
+        	    return operator--(), tmp;
+			}
+
+			archetype_view_iterator & operator+=(const difference_type value) noexcept {
+            	index -= value;
+            	return *this;
+       		}
+
+        	archetype_view_iterator operator+(const difference_type value) const noexcept {
+        	    archetype_view_iterator copy = *this;
+        	    return (copy += value);
+        	}
+
+        	archetype_view_iterator & operator-=(const difference_type value) noexcept {
+        	    return (*this += -value);
+        	}
+
+        	archetype_view_iterator operator-(const difference_type value) const noexcept {
+        	    return (*this + -value);
+        	}
+
+        	difference_type operator-(const archetype_view_iterator &other) const noexcept {
+        	    return other.index - index;
+        	}
+
+        	[[nodiscard]] reference operator[](const difference_type value) const {
+					return std::tie(owner->archetype->entities[value],
+					std::get<ComponentArray<Cs>>(owner->componentArrays)[value]...);
+        	}
+
+			[[nodiscard]] bool operator==(const archetype_view_iterator &other) const noexcept {
+        	    return other.index == index;
+        	}
+
+        	[[nodiscard]] bool operator!=(const archetype_view_iterator &other) const noexcept {
+        	    return !(*this == other);
+        	}
+
+        	[[nodiscard]] bool operator<(const archetype_view_iterator &other) const noexcept {
+        	    return index > other.index;
+        	}
+
+        	[[nodiscard]] bool operator>(const archetype_view_iterator &other) const noexcept {
+        	    return index < other.index;
+        	}
+
+        	[[nodiscard]] bool operator<=(const archetype_view_iterator &other) const noexcept {
+        	    return !(*this > other);
+        	}
+
+        	[[nodiscard]] bool operator>=(const archetype_view_iterator &other) const noexcept {
+        	    return !(*this < other);
+        	}
+
+		    [[nodiscard]] pointer operator->() const {
+            	return std::make_tuple(&(owner->archetype->entities[index]),
+					&(std::get<ComponentArray<Cs>>(owner->componentArrays)[index])...);
+        	}
+
+			[[nodiscard]] reference operator*() const {
+					return std::tie(owner->archetype->entities[index],
+					std::get<ComponentArray<Cs>>(owner->componentArrays)[index]...);
+			}
+
+		private:
+			difference_type index;
+			ArchetypeView<Cs...>* owner; 
+		};
+
+		ArchetypeView(Archetype* archetype) : 
+				archetype(archetype),
+				componentArrays(std::make_tuple(GetComponentArray<Cs>(archetype)...)) {}
+
+		archetype_view_iterator begin() { return archetype_view_iterator{ 0, this }; }
+		archetype_view_iterator end() { return archetype_view_iterator(archetype->entities.size(), this); }
+
+		archetype_view_iterator rbegin() { return archetype_view_iterator(archetype->entities.size(), this); }
+		archetype_view_iterator rend() { return archetype_view_iterator(-1, this); }
+
+		private:
+		component_arrays componentArrays;
+		Archetype* archetype;
+	};
+
+	template <typename T, typename ...Ts>
+	using areT = std::conjunction<std::is_same<T, Ts>...>;
+
+	template <typename T, typename ...Ts>
+	inline constexpr bool areT_v = std::conjunction_v<std::is_same<T, Ts>...>;
+
+	template<typename ...Cs>
+	class MultiArchetypeView final {
+		using underlying_views = typename std::vector<ArchetypeView<Cs...>>;
 	public:
-		View() = default;
-		
-		View(std::vector<underlying_iterator>&& begins, std::vector<underlying_iterator>&& ends) :begins(begins),ends(ends)
-		{
-			
-		}
-		
-		/**
-		 * \brief return a MultiIterator to the beginning of the View 
-		 * \return MultiIterator < T, Iterator<T>>
-		 */
-		iterator begin() { return iterator{ begins, &begins, &ends }; }
-		/**
-		 * \brief return a MultiIterator to the end of the View
-		 * \return MultiIterator < T, Iterator<T>>
-		 */
-		iterator end() { return iterator{ ends, &begins, &ends,ends.size()-1 }; }
+		class multi_component_view_iterator final {
+		public:
+			using archetype_view_iterator = ArchetypeView<Cs...>::archetype_view_iterator;
+			using iterator_category = std::input_iterator_tag;
+			using difference_type = std::ptrdiff_t;
+			using value_type = ArchetypeView<Cs...>::archetype_view_iterator::value_type;
+			using pointer = ArchetypeView<Cs...>::archetype_view_iterator::pointer;
+			using reference = ArchetypeView<Cs...>::archetype_view_iterator::reference;
+
+			multi_component_view_iterator(std::vector<ArchetypeView<Cs...>>::iterator underlyingViewsIterator, archetype_view_iterator archetypeViewIterator, MultiArchetypeView<Cs...>* owner) :
+				underlyingViewsIterator(underlyingViewsIterator), archetypeViewIterator(archetypeViewIterator), owner(owner) {}
+
+			multi_component_view_iterator& operator++() noexcept {
+				if (++archetypeViewIterator == underlyingViewsIterator->end() && ++underlyingViewsIterator != owner->underlyingViews.end()) {
+					archetypeViewIterator = underlyingViewsIterator->begin();
+				}
+				return *this;
+			}
+
+			multi_component_view_iterator operator++(int) noexcept {
+				archetype_view_iterator tmp = *this;
+				return ++(*this), tmp;
+			}
+
+			[[nodiscard]] bool operator==(const multi_component_view_iterator& other) const noexcept {
+				return other.underlyingViewsIterator == underlyingViewsIterator;
+			}
+
+			[[nodiscard]] bool operator!=(const multi_component_view_iterator& other) const noexcept {
+				return !(*this == other);
+			}
+
+			[[nodiscard]] pointer operator->() const {
+				return archetypeViewIterator.operator->();
+			}
+
+			[[nodiscard]] reference operator*() const {
+				return *archetypeViewIterator;
+			}
+
+		private:
+			std::vector<ArchetypeView<Cs...>>::iterator underlyingViewsIterator;
+			archetype_view_iterator archetypeViewIterator;
+			MultiArchetypeView<Cs...>* owner;
+		};
+
+		void emplace_back(Archetype* archetype) { underlyingViews.emplace_back(ArchetypeView<Cs...>(archetype)); }
+
+		multi_component_view_iterator begin() { return multi_component_view_iterator{ underlyingViews.begin(), underlyingViews.begin()->begin(),this }; }
+
+		multi_component_view_iterator end() { return multi_component_view_iterator{ underlyingViews.end(),underlyingViews.begin()->begin(),this }; }
 
 
 	private:
-		std::vector<underlying_iterator> begins;
-		std::vector<underlying_iterator> ends;
-	};
-
-	/**
-	 * \brief Iterable Class of type Args... offers an way to iterate over multiple views in parallel
-	 * \tparam Args underlying types of the iterators
-	 */
-	template<typename ...Args>
-	class MultiView
-	{
-		using container = std::tuple<View<Args>...>;
-		using underlying_iterator = std::tuple<MultiIterator<Args, Iterator<Args>>...>;
-		using iterator = ZipIterator<std::tuple<MultiIterator<Args, Iterator<Args>>...>, Args...>;
-	public:
-		
-		MultiView(container data) : data(data) {}
-
-		/**
-		 * \brief return a zip iterator to the begining of the MultiView
-		 * \return ZipIterator<std::tuple<MultiIterator<Args, Iterator<Args>>...>, Args...>
-		 */
-		iterator begin() { return iterator{ std::make_tuple(std::get<View<Args>>(data).begin()...) }; }
-		/**
-		 * \brief return a zip iterator to the end of the MultiView
-		 * \return ZipIterator<std::tuple<MultiIterator<Args, Iterator<Args>>...>, Args...>
-		 */
-		iterator end() { return iterator{ std::make_tuple(std::get<View<Args>>(data).end()...) }; }
-
-	private:
-		container data;
-	};
-
-	template<typename ...Ts>
-	struct view_tuple {
-		using type = std::tuple<View<Ts>...>;
+		underlying_views underlyingViews;
 	};
 	
-	class ArchetypeViewBuilder {
-	public:
-		/**
-		 * \brief BuildAMultiView of Entities and Components(Cs) from given archetypes
-		 * \tparam Cs ComponentTypes
-		 * \param archetypes 
-		 * \return MultiView<Entity, Cs...>
-		 */
-		template<typename... Cs>
-		MultiView<Entity, Cs...> BuildMultiComponentView(const std::vector<Archetype*>& archetypes) {
-			auto entityView = std::make_tuple<View<Entity>>(BuildEntityView(archetypes));
-			std::tuple<View<Cs>...> componentView = std::make_tuple(BuildComponentView<Cs>(archetypes)...);
-			return MultiView<Entity, Cs...>(std::tuple_cat(std::move(entityView), std::move(componentView)));
-		}
-
-		/**
-		 * \brief Build a View of Component Type T from sequence of Archetypes
-		 * \tparam T ComponentType
-		 * \param sequence vector of archetype to build view from
-		 * \return View<T> combined iterable
-		 */
-		template<typename T>
-		View<T> BuildComponentView(std::vector<Archetype*> sequence)
-		{
-			std::vector<Iterator<T>> begins;
-			std::vector<Iterator<T>> ends;
-			ComponentTypeID componentType = TypeIdGenerator::GetTypeID<T>();
-			for (auto&& archetype : sequence)
+	template<typename ...Cs>
+	MultiArchetypeView<Cs...> build_multiarchetype_view(ArchetypeID archetypeId, ArchetypeMap* archetypeMap, ChunkID chunkId = NULL_CHUNK) {
+		MultiArchetypeView<Cs...> multiArchetypeView;
+		for (auto&& archetype : *archetypeMap->get()) {
+			if (!std::ranges::includes(archetype.second->archetypeId.begin(), archetype.second->archetypeId.end(),
+				archetypeId.begin(), archetypeId.end()))
 			{
-				size_t index = std::ranges::find(archetype->archetypeId.begin(), archetype->archetypeId.end(), componentType) - archetype->archetypeId.begin();
-				T* begin = reinterpret_cast<T*>(&archetype->componentArrays[index].componentData[0]);
-				T* end = reinterpret_cast<T*>(&archetype->componentArrays[index].componentData[archetype->entities.size()* sizeof(T)]);
-				begins.emplace_back(Iterator<T>(begin));
-				ends.emplace_back(Iterator<T>(end));
+				continue;
 			}
-			return View<T>(std::move(begins), std::move(ends));
-		}
-
-		/**
-		 * \brief Build a View of Entities from given archetypes 
-		 * \param archetypes 
-		 * \return View of Entities
-		 */
-		View<Entity> BuildEntityView(std::vector<Archetype*> archetypes)
-		{
-			std::vector<Iterator<Entity>> begins;
-			std::vector<Iterator<Entity>> ends;
-
-			for (auto&& archetype : archetypes)
+			if (archetype.second->chunkId != chunkId && chunkId != NULL_CHUNK)
 			{
-				begins.emplace_back(Iterator<Entity>(archetype->entities.data()));
-				ends.emplace_back(Iterator<Entity>(archetype->entities.data()+ (archetype->entities.end()-archetype->entities.begin())));
+				continue;
 			}
-			return View<Entity>(std::move(begins), std::move(ends));
+			multiArchetypeView.emplace_back(archetype.second.get());
 		}
-	};
-
+		return multiArchetypeView;
+	}
 }
