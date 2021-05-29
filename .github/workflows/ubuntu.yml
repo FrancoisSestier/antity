@@ -39,7 +39,7 @@ jobs:
       - name: test
         run: |
           cd build
-          gdb ctest --build-config Debug --output-on-failure --stop-on-failure --debug -C Debug
+          ctest --build-config Debug --output-on-failure --stop-on-failure --debug -C Debug
           gdb antity_test --gunit_break_on_failure
       - name: collect code coverage
         uses: codecov/codecov-action@v1.5.0
