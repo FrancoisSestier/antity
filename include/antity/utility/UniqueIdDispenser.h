@@ -20,7 +20,6 @@ namespace ant {
 		/// <returns></returns>
 		UniqueIdDispenser(T start) {
 			idCount = start;
-			nextIDs.push(start);
 		}
 
 		/// <summary>
@@ -28,9 +27,11 @@ namespace ant {
 		/// </summary>
 		/// <returns> unsigned ID </returns>
 		T GetID() {
-			nextIDs.push(++idCount);
-			auto id = nextIDs.front();
-			nextIDs.pop();
+			if (recycled.empty()) {
+				return ++idCount;
+			}
+			auto id = recycled.front();
+			recycled.pop();
 			return id;
 		}
 
@@ -39,11 +40,11 @@ namespace ant {
 		/// Free unused ID
 		/// </summary>
 		void FreeID(T id) {
-			nextIDs.push(id);
+			recycled.push(id);
 		}
 
 	private:
-		std::queue<T> nextIDs;
+		std::queue<T> recycled;
 		T idCount = 0;
 	};
 

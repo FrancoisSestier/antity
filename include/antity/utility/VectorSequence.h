@@ -5,13 +5,11 @@
 
 namespace ant
 {
-
-
 	template<typename T>
 	class VectorSequence
 	{
 		using underlying_iterator = typename std::vector<T>::iterator;
-		using iterator = MultiIterator < T, underlying_iterator>;
+		using iterator = MultiIterator< underlying_iterator>;
 		using underlying_type = T;
 	public:
 		VectorSequence(std::vector<std::vector<T>*> sequence)
@@ -23,8 +21,8 @@ namespace ant
 			}
 		}
 
-		iterator begin() { return iterator{ begins, &begins, &ends }; }
-		iterator end() { return iterator{ ends, &begins, &ends,ends.size()-1 }; }
+		iterator begin() { return iterator{ begins.front(), &begins, &ends }; }
+		iterator end() { return iterator{ ends.back(), &begins, &ends,ends.size()-1 }; }
 
 
 	private:
@@ -36,8 +34,8 @@ namespace ant
 	struct VectorZipper {
 	
 		using type = VectorZipper<Args...>;
-		using underlying_iterator = std::tuple<MultiIterator<Args, typename  std::vector<Args>::iterator>...>;
-		using iterator = ZipIterator<std::tuple<MultiIterator<Args, typename  std::vector<Args>::iterator>...>, Args...>;
+		using underlying_iterator = std::tuple<MultiIterator<typename  std::vector<Args>::iterator>...>;
+		using iterator = ZipIterator<std::tuple<MultiIterator<typename  std::vector<Args>::iterator>...>, Args...>;
 	
 		VectorZipper(underlying_iterator begins, underlying_iterator ends) : begins(begins),ends(ends){}
 
@@ -53,13 +51,4 @@ namespace ant
 	{
 		return VectorSequence<T>(std::vector<std::vector<T>*>{&std::forward<Args>(args)...});
 	}
-
-	template<typename  ...Args>
-	typename VectorZipper<Args...>::type zip(VectorSequence<Args>&... args)
-	{
-		return VectorZipper( std::make_tuple(args.begin()...), std::make_tuple(args.end()...) );
-	}
-
-
-	
 }

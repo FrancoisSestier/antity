@@ -1,16 +1,15 @@
 #pragma once
 #include <algorithm>
 #include <memory>
-#include <unordered_map>
-
 #include "Archetype.h"
+#include "antity/utility/robin_hood.h"
 
 namespace ant
 {
 	class ArchetypeMap
 	{
 	public:
-		using ArchetypeHashTable = std::unordered_map<
+		using ArchetypeHashTable = robin_hood::unordered_map<
 			ArchetypeKey, std::unique_ptr<Archetype>, ArchetypeKey::hasher, ArchetypeKey::comparator>;
 
 		ArchetypeHashTable* get()
@@ -56,6 +55,7 @@ namespace ant
 		 */
 		std::vector<Archetype*> GetArchetypes(ArchetypeID archetypeId, ChunkID chunkId = NULL_CHUNK)
 		{
+
 			std::vector<Archetype*> archetypes;
 			for (auto&& archetype : archetypeHashTable)
 			{
@@ -71,6 +71,7 @@ namespace ant
 				archetypes.emplace_back(archetype.second.get());
 			}
 
+
 			return std::move(archetypes);
 		}
 
@@ -80,7 +81,7 @@ namespace ant
 			auto newArchetype = std::make_unique<Archetype>(archetypeKey.archetypeId, archetypeKey.chunkId);
 			for (auto&& componentID : archetypeKey.archetypeId)
 			{
-				newArchetype->componentArrays.push_back(ComponentArray{new std::byte[0], 0});
+				newArchetype->byteArrays.push_back(ByteArray{new std::byte[0], 0});
 				AddToComponentArchetypeMap(componentID, newArchetype.get());
 			}
 			archetypeHashTable.emplace(archetypeKey, std::move(newArchetype));
@@ -93,6 +94,6 @@ namespace ant
 
 	private:
 		ArchetypeHashTable archetypeHashTable;
-		std::unordered_map<ComponentTypeID, std::vector<Archetype*>> componentTypeArchetypeMap;
+		robin_hood::unordered_map<ComponentTypeID, std::vector<Archetype*>> componentTypeArchetypeMap;
 	};
 }

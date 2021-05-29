@@ -17,7 +17,7 @@ struct MultiVector
 
 	using IteratorInt = Iterator<int>;
 
-	using MultiIteratorInt = MultiIterator<int, IteratorInt>;
+	using MultiIteratorInt = MultiIterator<IteratorInt>;
 
 	MultiVector(std::vector<Integers*> data) : data(data)
 	{
@@ -28,8 +28,8 @@ struct MultiVector
 		}
 	}
 	
-	MultiIteratorInt begin() { return MultiIteratorInt{b,&b,&e}; }
-	MultiIteratorInt end() { return MultiIteratorInt{ e,&b,&e,1 };; }
+	MultiIteratorInt begin() { return MultiIteratorInt{b.front(),&b,&e}; }
+	MultiIteratorInt end() { return MultiIteratorInt{e.back(),&b,&e,1}; }
 
 	std::vector<Integers*> data;
 	std::vector<IteratorInt> b;
@@ -70,6 +70,7 @@ TEST(Iterators, MultiIterator)
 
 }
 
+/*
 TEST(Iterators, VectorSequence)
 {
 	std::vector<int> a = { 1,2,3 };
@@ -86,28 +87,4 @@ TEST(Iterators, VectorSequence)
 
 
 }
-
-TEST(Iterators,MultiZipIterator)
-{
-	std::vector<int> a = { 1,2,3 };
-	std::vector<int> b = { 4,5,6 };
-
-	std::vector<float> c = { .4,.5,.6 };
-	std::vector<float> d = { .4,.5,.6 };
-
-	auto seqA = ant::makeVectorSequence<int>(a, b);
-	auto seqB = ant::makeVectorSequence<float>(c, d);
-
-	int counter = 0;
-	
-	for (auto [i,j] : ant::zip<int,float>(seqA,seqB))
-	{
-		counter++;
-		if (counter == 4) {
-			ASSERT_EQ(i, 4);
-			ASSERT_EQ(j, .4f);
-		}
-	}
-	
-	ASSERT_EQ(counter, 6);
-}
+*/

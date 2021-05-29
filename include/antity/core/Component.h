@@ -2,6 +2,7 @@
 #include <iterator>
 #include <new>
 #include "Identifier.h"
+#include "antity/utility/robin_hood.h"
 
 namespace ant
 {
@@ -19,7 +20,7 @@ namespace ant
 		virtual ComponentTypeID GetTypeID() = 0;
 	};
 
-	using ComponentMap = std::unordered_map<ComponentTypeID, std::unique_ptr<ComponentBase>>;
+	using ComponentMap = robin_hood::unordered_map<ComponentTypeID, std::unique_ptr<ComponentBase>>;
 
 	
 	template<class C>

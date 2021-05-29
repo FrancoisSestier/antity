@@ -2,15 +2,16 @@
 #include <vector>
 #include <tuple>
 #include "TypeTraits.h"
+#include <chrono>
 
 template<typename ...T, size_t... I>
-auto makeReferencesHelper(std::tuple<T...>& t, std::index_sequence<I...>)
+inline auto makeReferencesHelper(std::tuple<T...>& t, std::index_sequence<I...>)
 {
 	return std::tie(*std::get<I>(t)...);
 }
 
 template<typename ...T>
-auto makeReferences(std::tuple<T...>& t) {
+inline auto makeReferences(std::tuple<T...>& t) {
 	return makeReferencesHelper<T...>(t, std::make_index_sequence<sizeof...(T)>{});
 }
 
@@ -64,27 +65,30 @@ private:
 };
 
 
-template<typename C,typename It>
+template<typename It>
 struct MultiIterator
 {
-	using iterator_category = std::random_access_iterator_tag;
-	using difference_type = std::ptrdiff_t;
-	using value_type = C;
-	using pointer = C*;  // or also value_type*
-	using reference = C&;  // or also value_type&
+	using difference_type = typename std::iterator_traits<It>::difference_type;
+	using value_type = typename std::iterator_traits<It>::value_type;
+	using pointer = typename std::iterator_traits<It>::pointer;
+	using reference = typename std::iterator_traits<It>::reference;
+	using iterator_category = typename std::iterator_traits<It>::iterator_category;
 
-	MultiIterator(std::vector<It> iterator, std::vector<It>* begins, std::vector<It>* ends,size_t index = 0) : iterators(iterator), begins(begins), ends(ends), index(index) {};
+	MultiIterator(It iterator, std::vector<It>* begins, std::vector<It>* ends,size_t index = 0) : iterator(iterator), begins(begins), ends(ends), index(index) {};
 
-	reference operator*() const { return *iterators.at(index); }
-	pointer operator->() { return iterators.at(index); }
+	reference operator*() const { return *iterator; }
+	pointer operator->() { return iterator; }
 
 
 	
 	MultiIterator& operator++() {
-		if(++iterators.at(index) == ends->at(index) && index != ends->size()-1 )
+
+		if(++iterator == ends->at(index) && index != ends->size()-1 )
 		{
-			index++;
+			++index;
+			iterator = begins->at(index);
 		}
+
 		return *this;
 	}
 
@@ -96,11 +100,12 @@ struct MultiIterator
 	}
 
 	MultiIterator& operator--() {
-		if (iterators.at(index) == begins->at(index) && index != 0)
+		if (iterator == begins->at(index) && index != 0)
 		{
-			index--;
+			--index;
+			iterator == ends(index);
 		}
-		--iterators.at(index);
+		--iterator;
 		return *this;
 	}
 
@@ -115,11 +120,11 @@ struct MultiIterator
 	{
 		if (rhs.index == index)
 		{
-			return iterators.at(index) - rhs.iterators.at(index);
+			return iterator - rhs.iterator;
 		}
 		difference_type diff = 0;
 		diff += rhs.ends->at(rhs.index) - rhs.iterators.at(rhs.index);
-		diff += (iterators.at(index) - begins->at(index));
+		diff += (iterator - begins->at(index));
 		for(size_t i = rhs.index + 1; i < this->index;++i)
 		{
 			diff += (ends->at(i) - begins->at(i));
@@ -146,27 +151,27 @@ struct MultiIterator
 	
 	MultiIterator& operator+=(const difference_type& rhs)
 	{
-		if(index != ends->size() - 1 && (iterators.at(index) + rhs) >= ends->at(index))
+		if(index != ends->size() - 1 && (iterator + rhs) >= ends->at(index))
 		{
-			auto diff = rhs - (ends->at(index) - iterators.at(index));
-			iterators.at(index) = ends->at(index) - 1;
+			auto diff = rhs - (ends->at(index) - iterator);
+			iterator = ends->at(index) - 1;
 			index++;
 			return *this += diff;
 		}
-		iterators.at(index) += rhs;
+		iterator += rhs;
 		return *this;
 	}
 	
 	MultiIterator& operator-=(const difference_type& rhs)
 	{
-		if ( index != 0 && (iterators.at(index) - rhs) < begins->at(index) )
+		if ( index != 0 && (iterator - rhs) < begins->at(index) )
 		{
-			auto diff = rhs - (iterators.at(index) - begins->at(index));
-			iterators.at(index) = begins->at(index);
+			auto diff = rhs - (iterator - begins->at(index));
+			iterator = begins->at(index);
 			index--;
 			return *this -= diff;
 		}
-		iterators.at(index) -= rhs;
+		iterator -= rhs;
 		return *this;
 	}
 
@@ -183,7 +188,7 @@ struct MultiIterator
 		}
 		if(index == rhs.index)
 		{
-			return iterators.at(index) > rhs.iterators.at(index);
+			return iterator > rhs.iterator;
 		}
 		return false;
 		
@@ -196,7 +201,7 @@ struct MultiIterator
 		}
 		if (index == rhs.index)
 		{
-			return iterators.at(index) < rhs.iterators.at(index);
+			return iterator < rhs.iterator;
 		}
 		return false;
 	}
@@ -208,7 +213,7 @@ struct MultiIterator
 		}
 		if (index == rhs.index)
 		{
-			return iterators.at(index) >= rhs.iterators.at(index);
+			return iterator >= rhs.iterator;
 		}
 		return false;
 	}
@@ -219,31 +224,24 @@ struct MultiIterator
 		}
 		if (index == rhs.index)
 		{
-			return iterators.at(index) <= rhs.iterators.at(index);
+			return iterator <= rhs.iterator;
 		}
 		return false;
 	}
 	
 	friend bool operator== (const MultiIterator& a, const MultiIterator& b)
 	{
-		if(a.iterators.size() == 0 && b.iterators.size()==0)
-		{
-			return true;
-		}
-		return (a.iterators.at(a.index) == b.iterators.at(a.index));
+		return (a.iterator == b.iterator);
 	};
-	
+
 	friend bool operator!= (const MultiIterator& a, const MultiIterator& b) {
-		if (a.iterators.empty() && b.iterators.empty())
-		{
-			return false;
-		}
-		return (a.index != b.index || a.iterators.at(a.index) != b.iterators.at(a.index));
+		return a.iterator != b.iterator;
+
 	};
 
 public:
 	size_t index = 0;
-	std::vector<It> iterators;
+	It iterator;
 	std::vector<It>* begins;
 	std::vector<It>* ends;
 };
@@ -254,8 +252,8 @@ struct ZipIterator
 	using iterator_category = std::forward_iterator_tag;
 	using difference_type = std::ptrdiff_t;
 	using value_type = std::tuple <Cs...>;
-	using pointer = std::tuple <Cs...>*;  // or also value_type*
-	using reference = std::tuple <Cs&...>;  // or also value_type&
+	using pointer = std::tuple <Cs...>*;  
+	using reference = std::tuple <Cs&...>;
 
 	ZipIterator(It cs) : iterators(cs){}
 	
@@ -319,7 +317,7 @@ struct ZipIterator
 				(tupleArgs++,...);
 			}, iterators
 		);
-		
+
 		return *this;
 	}
 
@@ -389,5 +387,5 @@ private:
 
 template<typename ...Cs>
 struct MultiZipIterator {
-	using type = ZipIterator<std::tuple<MultiIterator<Cs, Iterator<Cs>>...>,Cs...>;
+	using type = ZipIterator<std::tuple<MultiIterator<Iterator<Cs>>...>,Cs...>;
 };

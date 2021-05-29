@@ -9,9 +9,9 @@ namespace  ant
 
 	typedef std::byte* ComponentData;
 
-	struct ComponentArray
+	struct ByteArray
 	{
-		ComponentData componentData;
+		std::byte* componentData;
 		size_t size;
 	};
 
@@ -55,7 +55,7 @@ namespace  ant
 	{
 		ArchetypeID archetypeId;
 		ChunkID chunkId;
-		std::vector<ComponentArray> componentArrays;
+		std::vector<ByteArray> byteArrays;
 		std::vector<Entity> entities;
 	};
 

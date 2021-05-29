@@ -14,15 +14,21 @@ namespace ant
     typedef std::vector<ComponentTypeID> ArchetypeID;
 	
     class TypeIdGenerator {
-         static IDType identifier() noexcept {
+         inline static IDType identifier() noexcept {
                 static IDType value = 0;
                 return value++;
          }
+         
+         template<typename T> 
+         inline static IDType GetSanitizedTypeID() {
+            static const IDType value = identifier();
+            return value;
+         }
 
         public:
-            template<typename> static IDType GetTypeID() noexcept {
-                static const IDType value = identifier();
-                return value;
+            template<typename T> 
+            inline static IDType GetTypeID() noexcept {
+                return GetSanitizedTypeID<std::remove_cv_t<std::remove_reference_t<T>>>();
             }
     };
 

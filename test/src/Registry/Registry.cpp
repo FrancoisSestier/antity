@@ -54,8 +54,10 @@ TEST(Registry, GetComponents)
 	reg.AddComponent<char>(other, 'c');
 
 	int counter = 0;
-	
-	for(auto[e,i,f] : reg.GetComponents<int,float>())
+
+	reg.GetComponents<int>();
+
+	for(auto[e,i,f] : reg.GetComponents<int, float>())
 	{
 		
 		counter ++;

@@ -40,7 +40,7 @@ namespace ant
 		
 		void DoubleAllocation(Archetype* archetype, size_t componentIndex, ComponentBase* component)
 		{
-			auto newSize = archetype->componentArrays.at(componentIndex).size * 2 + component->GetSize();
+			auto newSize = archetype->byteArrays.at(componentIndex).size * 2 + component->GetSize();
 			Resize(archetype, componentIndex, component, newSize);
 		}
 
@@ -56,25 +56,25 @@ namespace ant
 			auto* newData = component->Allocate(newSize);
 			for (std::size_t e = 0; e < archetype->entities.size(); ++e)
 			{
-				component->MoveData(&archetype->componentArrays[componentIndex].componentData[e * componentSize],
+				component->MoveData(&archetype->byteArrays[componentIndex].componentData[e * componentSize],
 					&newData[e * componentSize]);
-				component->DestroyData(&archetype->componentArrays[componentIndex].componentData[e * componentSize]);
+				component->DestroyData(&archetype->byteArrays[componentIndex].componentData[e * componentSize]);
 			}
-			delete[] archetype->componentArrays[componentIndex].componentData;
-			archetype->componentArrays.at(componentIndex).size = newSize;
-			archetype->componentArrays[componentIndex].componentData = newData;
+			delete[] archetype->byteArrays[componentIndex].componentData;
+			archetype->byteArrays.at(componentIndex).size = newSize;
+			archetype->byteArrays[componentIndex].componentData = newData;
 		}
 		
 		bool NeedsSpace(Archetype* archetype, size_t componentIndex, size_t componentSize)
 		{
-			size_t allocated = archetype->componentArrays.at(componentIndex).size;
+			size_t allocated = archetype->byteArrays.at(componentIndex).size;
 			size_t needed = archetype->entities.size() * componentSize + componentSize;
 			return needed > allocated;
 		}
 
 		bool NeedsShriking(Archetype* archetype, size_t componentIndex, size_t componentSize)
 		{
-			size_t allocated = archetype->componentArrays.at(componentIndex).size;
+			size_t allocated = archetype->byteArrays.at(componentIndex).size;
 			size_t used = archetype->entities.size() * componentSize;
 			return allocated > used/2;
 		}
