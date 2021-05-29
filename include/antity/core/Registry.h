@@ -1,6 +1,5 @@
 #pragma once
 #include <stdexcept>
-#include <unordered_map>
 #include "ArchetypeMap.h"
 #include "Record.h"
 #include "../utility/UniqueIdDispenser.h"
@@ -11,6 +10,7 @@
 #include "RegisteryDebugger.h"
 #include "../utility/Iterator.h"
 #include "View.h"
+#include <chrono>
 
 namespace ant {
 
@@ -18,6 +18,8 @@ namespace ant {
 	{
 	public:
 		
+		using entity_type = Entity;
+
 		Registry()
 			: entityIndex(std::make_unique<EntityIndex>()),
 			  componentMap(std::make_unique<ComponentMap>()),
@@ -64,7 +66,7 @@ namespace ant {
 		template<typename C>
 		void RemoveComponent(Entity entity);
 		
-		template<typename ...Cs>
+		template <typename ... Cs> 
 		void RegisterComponents();
 
 		template<typename C>
@@ -76,8 +78,17 @@ namespace ant {
 		 * \param chunkid if no chunkID all chunkIDs will be in the multiview
 		 * \return a Multiview<Entity,Cs...>
 		 */
-		template<typename ...Cs>
-		MultiView<Entity, Cs...> GetComponents(ChunkID chunkid = NULL_CHUNK);
+		template <typename ... Cs> requires (sizeof...(Cs) > 1)
+		auto GetComponents(ChunkID chunkid = NULL_CHUNK);
+
+		/**
+		 * \brief builds a multiviews from single component in chunkID
+		 * \tparam Cs Component types to be retrieved
+		 * \param chunkid if no chunkID all chunkIDs will be in the multiview
+		 * \return a Multiview<Entity,Cs...>
+		 */
+		template <typename C>
+		auto GetComponents(ChunkID chunkid = NULL_CHUNK);
 
 		/**
 		 * \brief Get all given Component from an entity
@@ -88,8 +99,6 @@ namespace ant {
 		template<typename ...Cs>
 		std::tuple<Cs&...> GetEntityComponents(Entity entity);
 		
-		template<typename C>
-		View<C> GetComponent();
 	private:
 	
 	private:
@@ -99,7 +108,6 @@ namespace ant {
 		UniqueIdDispenser<Entity> entityIdDispenser;
 		ArchetypeHandler archetypeHandler;
 		RegistryDebugger registryDebugger;
-		ArchetypeViewBuilder archetypeViewBuilder;
 	};
 
 
@@ -137,10 +145,10 @@ namespace ant {
 			newArchetypeId.push_back(newComponentTypeId);
 			std::ranges::sort(newArchetypeId);
 			newArchetype = archetypeMap.GetArchetype(ArchetypeKey{ newArchetypeId,record.chunkId });
-			const size_t oldIndex = record.index;
-			const size_t LastEntityIndex = oldArchetype->entities.size()-1;
+			const auto oldIndex = record.index;
+			const auto LastEntityIndex = oldArchetype->entities.size()-1;
 			int oldCompIndex = 0;
-			for(int i = 0; i <newArchetype->componentArrays.size();i++)
+			for(int i = 0; i <newArchetype->byteArrays.size();i++)
 			{
 				ComponentTypeID componentTypeId = newArchetype->archetypeId.at(i);
 				ComponentBase* component = componentMap->at(componentTypeId).get();
@@ -184,10 +192,10 @@ namespace ant {
 		ComponentTypeID componentToRemoveTypeId = TypeIdGenerator::GetTypeID<C>();
 		ArchetypeID newArchetypeID = oldArchetype->archetypeId;
 		auto componentToRemove = std::ranges::find(newArchetypeID.begin(), newArchetypeID.end(), componentToRemoveTypeId);
-		size_t componentToRemoveIndex = componentToRemove - newArchetypeID.begin();
+		auto componentToRemoveIndex = componentToRemove - newArchetypeID.begin();
 		newArchetypeID.erase(componentToRemove);
-		const size_t oldIndex = record.index;
-		const size_t LastEntityIndex = oldArchetype->entities.size() - 1;
+		const auto oldIndex = record.index;
+		const auto LastEntityIndex = oldArchetype->entities.size() - 1;
 		if (newArchetypeID.size() != 0)
 		{
 			newArchetype = archetypeMap.GetArchetype(ArchetypeKey{ newArchetypeID, oldArchetype->chunkId });
@@ -196,7 +204,7 @@ namespace ant {
 			newArchetype->entities.push_back(entity);
 		}
 		int c = 0;
-		for (int i = 0; i < oldArchetype->componentArrays.size(); i++)
+		for (int i = 0; i < oldArchetype->byteArrays.size(); i++)
 		{
 			ComponentBase* component = componentMap->at(oldArchetype->archetypeId.at(i)).get();
 			if(i != componentToRemoveIndex && newArchetypeID.size() != 0)
@@ -229,12 +237,6 @@ namespace ant {
 		}
 	}
 
-	template <typename C>
-	View<C> Registry::GetComponent()
-	{
-		return archetypeViewBuilder.BuildComponentView<C>(archetypeMap.GetArchetypes(TypeIdGenerator::GetTypeID<C>()));
-	}
-
 	template <typename ... Cs>
 	void Registry::RegisterComponents()
 	{
@@ -256,13 +258,21 @@ namespace ant {
 		archetypeMap.OnComponentRegistration(TypeIdGenerator::GetTypeID<C>());
 	}
 
-	template <typename ... Cs>
-	MultiView<Entity, Cs...> Registry::GetComponents(ChunkID chunkID)
+	template <typename ... Cs> requires (sizeof...(Cs) > 1)
+	auto Registry::GetComponents(ChunkID chunkID)
 	{
+
 		ArchetypeID archetypeId = ArchetypeID{ static_cast<ComponentTypeID>(TypeIdGenerator::GetTypeID<Cs>()) ... };
 		std::ranges::sort(archetypeId);
-		const auto archetypes = archetypeMap.GetArchetypes(archetypeId, chunkID);
-		return archetypeViewBuilder.BuildMultiComponentView<Cs...>(archetypes);
+		return build_multiarchetype_view<Cs...>(archetypeId, &archetypeMap, chunkID);
+	}
+
+	template <typename C>
+	auto Registry::GetComponents(ChunkID chunkID)
+	{
+
+		ComponentTypeID componentID= static_cast<ComponentTypeID>(TypeIdGenerator::GetTypeID<C>());
+		return build_multiarchetype_view<C>(componentID, &archetypeMap, chunkID);
 	}
 
 	template <typename ... Cs>
