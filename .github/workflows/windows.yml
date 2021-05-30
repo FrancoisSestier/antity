@@ -34,14 +34,3 @@ jobs:
         run: |
           cd build/test
           ctest --build-config Debug
-
-      - name: configure_benchmark
-        run: cmake -Sbenchmark -Bbuild/benchmark
-           
-      - name: build_benchmark
-        run: cmake --build build/benchmark --config Release
-          
-      - name: run_benchmark
-        run: |
-          cd build/benchmark/Release
-          antity_benchmark
