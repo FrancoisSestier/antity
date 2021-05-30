@@ -27,7 +27,7 @@ jobs:
       - name: configure
         run: |
            cmake -Stest -Bbuild/test
-           cmake -Stest -Bbuild/benchmark
+           cmake -Sbenchmark -Bbuild/benchmark
 
 
       - name: build
