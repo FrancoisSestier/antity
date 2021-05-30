@@ -42,4 +42,4 @@ jobs:
       - name: benchmark
         run: |
           cd build/benchmark/Release
-          antity_benchmark
+          antity_benchmark.exe
