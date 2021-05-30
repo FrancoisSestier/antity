@@ -43,5 +43,5 @@ jobs:
           
       - name: run_benchmark
         run: |
-          cd antity/antity/build/benchmark/Release
+          cd build/benchmark/Release
           antity_benchmark
