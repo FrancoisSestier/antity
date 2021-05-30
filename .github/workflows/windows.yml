@@ -32,14 +32,17 @@ jobs:
 
       - name: build
         run: |
-          cmake --build build/test --config Debug -j4
-          cmake --build build/benchmark --config Release -j4
+          cmake --build build/test -config Debug -j4
+          cmake --build build/benchmark -config Release -j4
 
       - name: test
         run: |
-          ctest build/test --build-config Debug
+          cd build/test
+          ctest --build-config Debug
           
       - name: benchmark
         run: |
+          cd ..
+          cd ..
           cd build/benchmark/Release
-          antity_benchmark.exe
+          antity_benchmark
