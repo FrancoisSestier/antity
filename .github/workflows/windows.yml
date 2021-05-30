@@ -32,8 +32,8 @@ jobs:
 
       - name: build
         run: |
-          cmake --build build/test -config Debug -j4
-          cmake --build build/benchmark -config Release -j4
+          cmake --build build/test --config Debug -j4
+          cmake --build build/benchmark --config Release
 
       - name: test
         run: |
@@ -42,7 +42,5 @@ jobs:
           
       - name: benchmark
         run: |
-          cd ..
-          cd ..
           cd build/benchmark/Release
           antity_benchmark
