@@ -1,6 +1,7 @@
 #pragma once
 #include <cstdint>
 #include <vector>
+#include <bitset>
 
 namespace ant
 {
@@ -9,8 +10,9 @@ namespace ant
     typedef IDType ComponentTypeID;
     typedef IDType Entity;
     typedef IDType ChunkID;
-    const IDType NULL_ENTITY = 0;
-    constexpr IDType NULL_CHUNK = UINT32_MAX;
+    inline constexpr IDType NULL_ENTITY = 0;
+    inline constexpr IDType NULL_CHUNK = UINT32_MAX;
+    inline constexpr uint16_t MAX_COMPONENTS = 64;
     typedef std::vector<ComponentTypeID> ArchetypeID;
 	
     class TypeIdGenerator {
@@ -32,4 +34,12 @@ namespace ant
             }
     };
 
+    inline static auto GetTypeSignature(IDType Id) noexcept {
+        return std::bitset<MAX_COMPONENTS>(1ULL << static_cast<uint64_t>(Id));
+    }
+
+    template<typename T>
+    inline static auto GetTypeSignature() noexcept {
+        return GetTypeSignature(TypeIdGenerator::GetTypeID<T>());
+    }
 }

@@ -9,7 +9,7 @@ namespace ant {
         ComponentArray() = default;
 
         ComponentArray(ByteArray* byteArray) : 
-                data(std::launder(reinterpret_cast<T*>(byteArray->componentData))),
+                data(reinterpret_cast<T*>(byteArray->componentData)),
                 byteArray(byteArray) {}
 
         [[nodiscard]] const T& operator[](size_t index) const {

@@ -54,9 +54,20 @@ namespace  ant
 	struct Archetype
 	{
 		ArchetypeID archetypeId;
+		std::bitset<MAX_COMPONENTS> archetypeSignature;
 		ChunkID chunkId;
 		std::vector<ByteArray> byteArrays;
 		std::vector<Entity> entities;
 	};
+
+	inline auto CreateArchetypeSignature(Archetype* archetype) {
+		std::bitset<MAX_COMPONENTS> signature;
+		for (auto componentId : archetype->archetypeId) {
+			signature |= GetTypeSignature(componentId);
+		}
+		return signature;
+	}
+
+	
 
 }
