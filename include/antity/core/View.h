@@ -120,8 +120,8 @@ namespace ant
 		archetype_view_iterator rend() { return archetype_view_iterator(-1, this); }
 
 		private:
-		component_arrays componentArrays;
 		Archetype* archetype;
+		component_arrays componentArrays;
 	};
 
 	template <typename T, typename ...Ts>
@@ -212,7 +212,7 @@ namespace ant
 	template<typename C>
 	MultiArchetypeView<C> build_multiarchetype_view(ComponentTypeID componentID, ArchetypeMap* archetypeMap, ChunkID chunkId = NULL_CHUNK) {
 		MultiArchetypeView<C> multiArchetypeView;
-		for (auto&& archetype : archetypeMap->GetArchetypes(componentID)) {
+		for (auto archetype : archetypeMap->GetArchetypes(componentID)) {
 			multiArchetypeView.emplace_back(archetype);
 		}
 		return multiArchetypeView;

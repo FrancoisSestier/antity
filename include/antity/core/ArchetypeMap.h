@@ -3,13 +3,14 @@
 #include <memory>
 #include "Archetype.h"
 #include "antity/utility/robin_hood.h"
+#include <unordered_map>
 
 namespace ant
 {
 	class ArchetypeMap
 	{
 	public:
-		using ArchetypeHashTable = robin_hood::unordered_map<
+		using ArchetypeHashTable = std::unordered_map<
 			ArchetypeKey, std::unique_ptr<Archetype>, ArchetypeKey::hasher, ArchetypeKey::comparator>;
 
 		ArchetypeHashTable* get()
@@ -34,6 +35,10 @@ namespace ant
 
 		void DeleteArchetype(const ArchetypeKey& archetypeKey)
 		{
+			for (auto&& componentID : archetypeKey.archetypeId)
+			{
+				RemoveFromComponentArchetypeMap(componentID, archetypeHashTable.at(archetypeKey).get());
+			}
 			archetypeHashTable.erase(archetypeKey);
 		}
 
@@ -79,12 +84,13 @@ namespace ant
 		void CreateArchetype(const ArchetypeKey& archetypeKey)
 		{
 			auto newArchetype = std::make_unique<Archetype>(archetypeKey.archetypeId, archetypeKey.chunkId);
+
+			archetypeHashTable.emplace(archetypeKey, std::move(newArchetype));
 			for (auto&& componentID : archetypeKey.archetypeId)
 			{
-				newArchetype->byteArrays.push_back(ByteArray{new std::byte[0], 0});
-				AddToComponentArchetypeMap(componentID, newArchetype.get());
+				archetypeHashTable.at(archetypeKey)->byteArrays.push_back(ByteArray{new std::byte[0], 0});
+				AddToComponentArchetypeMap(componentID, archetypeHashTable.at(archetypeKey).get());
 			}
-			archetypeHashTable.emplace(archetypeKey, std::move(newArchetype));
 		}
 
 		void AddToComponentArchetypeMap(ComponentTypeID componentTypeId, Archetype* archetype)
@@ -92,8 +98,16 @@ namespace ant
 			componentTypeArchetypeMap.at(componentTypeId).emplace_back(archetype);
 		}
 
+		void RemoveFromComponentArchetypeMap(ComponentTypeID componentTypeId, Archetype* archetype)
+		{
+			componentTypeArchetypeMap.at(componentTypeId).erase(std::remove(
+			componentTypeArchetypeMap.at(componentTypeId).begin(), componentTypeArchetypeMap.at(componentTypeId).end(), archetype
+			), componentTypeArchetypeMap.at(componentTypeId).end());
+
+		}
+
 	private:
 		ArchetypeHashTable archetypeHashTable;
-		robin_hood::unordered_map<ComponentTypeID, std::vector<Archetype*>> componentTypeArchetypeMap;
+		std::unordered_map<ComponentTypeID, std::vector<Archetype*>> componentTypeArchetypeMap;
 	};
 }

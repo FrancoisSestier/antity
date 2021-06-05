@@ -4,7 +4,7 @@ project(antity_test
   LANGUAGES CXX
 )
 
-option(ENABLE_TEST_COVERAGE "Enable test coverage" OFF)
+option(ENABLE_TEST_COVERAGE "Enable test coverage" ON)
 option(TEST_INSTALLED_VERSION "Test the version found by find_package" OFF)
 
 include(../cmake/CPM.cmake)
@@ -44,6 +44,6 @@ gtest_discover_tests(antity_test)
 
 
 if (ENABLE_TEST_COVERAGE)
-  target_compile_options(antity INTERFACE -O0 -g -fprofile-arcs -ftest-coverage)
+  target_compile_options(antity INTERFACE -gdwarf-3 -O0 -g -fprofile-arcs -ftest-coverage)
   target_link_options(antity INTERFACE -fprofile-arcs -ftest-coverage)
 endif()
