@@ -46,6 +46,7 @@ namespace ant {
 
     struct Archetype {
         ArchetypeID archetypeId;
+        Signature archetypeSignature;
         std::bitset<MAX_COMPONENTS> archetypeSignature;
         ChunkID chunkId;
         std::vector<ByteArray> byteArrays;
