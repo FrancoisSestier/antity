@@ -31,20 +31,14 @@ namespace ant {
 
         void DeleteArchetype(const ArchetypeKey& archetypeKey) {
             for (auto&& componentID : archetypeKey.archetypeId) {
-                RemoveFromComponentArchetypeMap(
+                RemoveFromSignatureArchetypeMap(
                     componentID, archetypeHashTable.at(archetypeKey).get());
             }
             archetypeHashTable.erase(archetypeKey);
         }
 
         void OnComponentRegistration(ComponentTypeID componentTypeId) {
-            componentTypeArchetypeMap.emplace(componentTypeId,
-                                              std::vector<Archetype*>());
-        }
 
-        const std::vector<Archetype*>& GetArchetypes(
-            ComponentTypeID componentTypeId) {
-            return componentTypeArchetypeMap.at(componentTypeId);
         }
 
         /**
@@ -81,31 +75,24 @@ namespace ant {
             for (auto&& componentID : archetypeKey.archetypeId) {
                 archetypeHashTable.at(archetypeKey)
                     ->byteArrays.push_back(ByteArray{new std::byte[0], 0});
-                AddToComponentArchetypeMap(
+                AddToSignatureArchetypeMap(
                     componentID, archetypeHashTable.at(archetypeKey).get());
             }
         }
 
-        void AddToComponentArchetypeMap(ComponentTypeID componentTypeId,
+        void AddToSignatureArchetypeMap(ComponentTypeID componentTypeId,
                                         Archetype* archetype) {
-            componentTypeArchetypeMap.at(componentTypeId)
-                .emplace_back(archetype);
+
         }
 
-        void RemoveFromComponentArchetypeMap(ComponentTypeID componentTypeId,
+        void RemoveFromSignatureArchetypeMap(ComponentTypeID componentTypeId,
                                              Archetype* archetype) {
-            componentTypeArchetypeMap.at(componentTypeId)
-                .erase(
-                    std::remove(
-                        componentTypeArchetypeMap.at(componentTypeId).begin(),
-                        componentTypeArchetypeMap.at(componentTypeId).end(),
-                        archetype),
-                    componentTypeArchetypeMap.at(componentTypeId).end());
         }
 
        private:
         ArchetypeHashTable archetypeHashTable;
-        std::unordered_map<ComponentTypeID, std::vector<Archetype*>>
-            componentTypeArchetypeMap;
+        std::vector<Signature> archetypermSignature;
+        std::unordered_map<Signature, std::vector<Archetype*>>
+            signatureArchetypeMap;
     };
 }  // namespace ant
