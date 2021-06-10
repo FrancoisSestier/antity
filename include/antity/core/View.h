@@ -1,5 +1,4 @@
 #pragma once
-#include "../utility/Iterator.h"
 #include "Archetype.h"
 #include "ArchetypeMap.h"
 #include "ComponentArray.h"
@@ -251,18 +250,6 @@ namespace ant {
                 continue;
             }
             multiArchetypeView.emplace_back(archetype.second.get());
-        }
-        return multiArchetypeView;
-    }
-
-    template <typename C>
-    MultiArchetypeView<C> build_multiarchetype_view(ComponentTypeID componentID,
-                                                    ArchetypeMap* archetypeMap,
-                                                    ChunkID chunkId
-                                                    = NULL_CHUNK) {
-        MultiArchetypeView<C> multiArchetypeView;
-        for (auto archetype : archetypeMap->GetArchetypes(componentID)) {
-            multiArchetypeView.emplace_back(archetype);
         }
         return multiArchetypeView;
     }
