@@ -7,11 +7,6 @@
 
 namespace ant {
 
-template<typename C>
-concept Component = requires(C component) {
-    
-};
-
     class ComponentBase {
        public:
         virtual ~ComponentBase() {}
