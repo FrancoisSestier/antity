@@ -8,4 +8,5 @@ format:
 .PHONY: test
 test:
 	cmake -Stest -Bbuild/test
+	cmake --build build/test
 	cmake --build build/test --target test -- ARGS="-V"
