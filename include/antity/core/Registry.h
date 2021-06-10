@@ -3,7 +3,6 @@
 #include <stdexcept>
 #include <string>
 
-#include "../utility/Iterator.h"
 #include "../utility/UniqueIdDispenser.h"
 #include "ArchetypeHandler.h"
 #include "ArchetypeMap.h"
@@ -72,17 +71,8 @@ namespace ant {
          * \return a Multiview<Entity,Cs...>
          */
         template <typename... Cs>
-        requires(sizeof...(Cs) > 1) auto GetComponents(ChunkID chunkid
+     auto GetComponents(ChunkID chunkid
                                                        = NULL_CHUNK);
-
-        /**
-         * \brief builds a multiviews from single component in chunkID
-         * \tparam Cs Component types to be retrieved
-         * \param chunkid if no chunkID all chunkIDs will be in the multiview
-         * \return a Multiview<Entity,Cs...>
-         */
-        template <typename C>
-        auto GetComponents(ChunkID chunkid = NULL_CHUNK);
 
         /**
          * \brief Get all given Component from an entity
@@ -257,20 +247,12 @@ namespace ant {
     }
 
     template <typename... Cs>
-    requires(sizeof...(Cs) > 1) auto Registry::GetComponents(ChunkID chunkID) {
+    auto Registry::GetComponents(ChunkID chunkID) {
         ArchetypeID archetypeId = ArchetypeID{
             static_cast<ComponentTypeID>(TypeIdGenerator::GetTypeID<Cs>())...};
         std::ranges::sort(archetypeId);
         return build_multiarchetype_view<Cs...>(archetypeId, &archetypeMap,
                                                 chunkID);
-    }
-
-    template <typename C>
-    auto Registry::GetComponents(ChunkID chunkID) {
-        ComponentTypeID componentID
-            = static_cast<ComponentTypeID>(TypeIdGenerator::GetTypeID<C>());
-        return build_multiarchetype_view<C>(componentID, &archetypeMap,
-                                            chunkID);
     }
 
     template <typename... Cs>
