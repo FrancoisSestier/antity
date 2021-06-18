@@ -52,9 +52,17 @@ namespace ant {
         std::vector<Entity> entities;
     };
 
-    inline auto CreateArchetypeSignature(Archetype* archetype) {
-        std::bitset<MAX_COMPONENTS> signature;
+    inline auto BuildArchetypeSignature(const Archetype* archetype) {
+        Signature signature;
         for (auto componentId : archetype->archetypeId) {
+            signature |= GetTypeSignature(componentId);
+        }
+        return signature;
+    }
+
+    inline auto BuildArchetypeSignature(const ArchetypeID& archetypeID) {
+        Signature signature;
+        for (auto componentId : archetypeID) {
             signature |= GetTypeSignature(componentId);
         }
         return signature;
