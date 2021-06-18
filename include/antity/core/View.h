@@ -4,6 +4,7 @@
 #include "ComponentArray.h"
 
 namespace ant {
+
     template <typename... Cs>
     class ArchetypeView final {
         using component_arrays = std::tuple<ComponentArray<Cs>...>;
@@ -16,7 +17,8 @@ namespace ant {
             using value_type = std::tuple<Entity, Cs...>;
             using pointer = std::tuple<Entity*, Cs*...>;
             using reference = std::tuple<Entity&, Cs&...>;
-            ;
+
+            archetype_view_iterator() = default;
 
             archetype_view_iterator(size_t index, ArchetypeView<Cs...>* owner)
                 : index(index), owner(owner) {}
@@ -120,6 +122,8 @@ namespace ant {
             ArchetypeView<Cs...>* owner;
         };
 
+        ArchetypeView() = default;
+
         ArchetypeView(Archetype* archetype)
             : archetype(archetype),
               componentArrays(
@@ -149,6 +153,100 @@ namespace ant {
 
     template <typename T, typename... Ts>
     inline constexpr bool areT_v = std::conjunction_v<std::is_same<T, Ts>...>;
+
+    template <typename... Cs>
+    class ArchetypeMapView {
+       public:
+        using archetype_signature_iterator = std::vector<Signature>::iterator;
+        using archetype_iterator
+            = ArchetypeView<Cs...>::archetype_view_iterator;
+        class archetyep_map_iterator {
+           public:
+            using iterator_category = std::input_iterator_tag;
+            using difference_type = std::ptrdiff_t;
+            using value_type = archetype_iterator::value_type;
+            using pointer = archetype_iterator::pointer;
+            using reference = archetype_iterator::reference;
+
+            archetyep_map_iterator(
+                archetype_signature_iterator archetypeSignatureIterator,
+                ArchetypeMapView* owner)
+                : archetypeSignatureIterator(archetypeSignatureIterator),
+                  owner(owner) {
+                if (archetypeSignatureIterator
+                    != owner->archetypeMap->signaturesEnd()) {
+                    owner->currentView
+                        = ArchetypeView<Cs...>(owner->archetypeMap->GetArchetype(
+                            *archetypeSignatureIterator));
+                    archetypeViewIterator = owner->currentView.begin();
+                }
+            }
+
+            archetyep_map_iterator& operator++() noexcept {
+                if (++archetypeViewIterator == owner->currentView.end()) {
+                    do {
+                        archetypeSignatureIterator++;
+                        if (archetypeSignatureIterator
+                            == owner->archetypeMap->signaturesEnd()) {
+                            return *this;
+                        }
+                    } while ((owner->include
+                             & ~(*archetypeSignatureIterator)).any());
+
+                    owner->currentView
+                        = ArchetypeView<Cs...>(owner->archetypeMap->GetArchetype(*archetypeSignatureIterator));
+                    archetypeViewIterator = owner->currentView.begin();
+                }
+                return *this;
+            }
+
+            archetyep_map_iterator operator++(int) noexcept {
+                archetyep_map_iterator tmp = *this;
+                return ++(*this), tmp;
+            }
+
+            [[nodiscard]] bool operator==(
+                const archetyep_map_iterator& other) const noexcept {
+                return other.archetypeSignatureIterator
+                       == archetypeSignatureIterator;
+            }
+
+            [[nodiscard]] bool operator!=(
+                const archetyep_map_iterator& other) const noexcept {
+                return !(*this == other);
+            }
+
+            [[nodiscard]] pointer operator->() const {
+                return archetypeViewIterator.operator->();
+            }
+
+            [[nodiscard]] reference operator*() const {
+                return *archetypeViewIterator;
+            }
+
+           private:
+            archetype_iterator archetypeViewIterator;
+            archetype_signature_iterator archetypeSignatureIterator;
+            ArchetypeMapView* owner;
+        };
+
+        ArchetypeMapView(ArchetypeMap* archetypeMap, Signature include)
+            : archetypeMap(archetypeMap), include(include) {}
+
+        auto begin() {
+            return archetyep_map_iterator{
+                archetypeMap->signaturesBegin(include), this};
+        }
+
+        auto end() {
+            return archetyep_map_iterator{archetypeMap->signaturesEnd(), this};
+        }
+
+       private:
+        ArchetypeView<Cs...> currentView;
+        Signature include;
+        ArchetypeMap* archetypeMap;
+    };
 
     template <typename... Cs>
     class MultiArchetypeView final {
