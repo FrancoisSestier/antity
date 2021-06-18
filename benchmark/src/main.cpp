@@ -203,7 +203,7 @@ void CompBenchmark(const std::vector<size_t>& v) {
 }
 
 int main() {
-    std::vector<size_t> v = {1,1000,100000,1000000};
+    std::vector<size_t> v = {1,10,100,1000,100000,1000000};
     //EmptyEntitiesBenchmmark(v);
     CompBenchmark(v);
 }
