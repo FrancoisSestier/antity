@@ -19,8 +19,8 @@ namespace ant {
         /**
          * \brief GetArchetype that match exactly the archetypeKey
          *		  if no archetype of such type exists creates it
-         * \param archetypeKey
-         * \return Archetype*
+         * \param archetypeKey requested archetype key
+         * \return Archetype* requested archetype
          */
         Archetype* GetArchetype(const ArchetypeKey& archetypeKey) {
             if (!archetypeHashTable.contains(archetypeKey)) {
@@ -29,17 +29,38 @@ namespace ant {
             return archetypeHashTable.at(archetypeKey).get();
         }
 
+        /**
+         * @brief Get the Archetype for given signature
+         *
+         * @param signature requested archetype signature
+         * @return Archetype* requested archetype
+         */
+        Archetype* GetArchetype(const Signature& signature) {
+            return signatureArchetypeMap.at(signature);
+        }
+
+        auto signaturesBegin(const Signature& match) {
+            return std::find_if(archetypeSignatures.begin(),
+                                archetypeSignatures.end(),
+                                [&](const Signature& signature) {
+                                    return (match & ~signature).none();
+                                });
+        }
+
+        auto signaturesEnd() { return archetypeSignatures.end(); }
+
+        /**
+         * @brief deletes archetype associated with given key
+         *
+         * @param archetypeKey archetype to be deleted
+         */
         void DeleteArchetype(const ArchetypeKey& archetypeKey) {
-            for (auto&& componentID : archetypeKey.archetypeId) {
-                RemoveFromSignatureArchetypeMap(
-                    componentID, archetypeHashTable.at(archetypeKey).get());
-            }
+            DeRegisterArchetypeSignature(
+                archetypeHashTable.at(archetypeKey).get());
             archetypeHashTable.erase(archetypeKey);
         }
 
-        void OnComponentRegistration(ComponentTypeID componentTypeId) {
-
-        }
+        void OnComponentRegistration(ComponentTypeID componentTypeId) {}
 
         /**
          * \brief Retrieve all archetypes that have at least all components in
@@ -75,24 +96,28 @@ namespace ant {
             for (auto&& componentID : archetypeKey.archetypeId) {
                 archetypeHashTable.at(archetypeKey)
                     ->byteArrays.push_back(ByteArray{new std::byte[0], 0});
-                AddToSignatureArchetypeMap(
-                    componentID, archetypeHashTable.at(archetypeKey).get());
             }
+            RegisterArchetypeSignature(
+                archetypeHashTable.at(archetypeKey).get());
         }
 
-        void AddToSignatureArchetypeMap(ComponentTypeID componentTypeId,
-                                        Archetype* archetype) {
-
+        inline void RegisterArchetypeSignature(Archetype* archetype) {
+            archetype->archetypeSignature = BuildArchetypeSignature(archetype);
+            archetypeSignatures.emplace_back(archetype->archetypeSignature);
+            signatureArchetypeMap.emplace(archetype->archetypeSignature,
+                                          archetype);
         }
 
-        void RemoveFromSignatureArchetypeMap(ComponentTypeID componentTypeId,
-                                             Archetype* archetype) {
+        inline void DeRegisterArchetypeSignature(Archetype* archetype) {
+            archetypeSignatures.erase(std::find(archetypeSignatures.begin(),
+                                                archetypeSignatures.end(),
+                                                archetype->archetypeSignature));
+            signatureArchetypeMap.erase(archetype->archetypeSignature);
         }
 
        private:
         ArchetypeHashTable archetypeHashTable;
-        std::vector<Signature> archetypermSignature;
-        std::unordered_map<Signature, std::vector<Archetype*>>
-            signatureArchetypeMap;
+        std::vector<Signature> archetypeSignatures;
+        std::unordered_map<Signature, Archetype*> signatureArchetypeMap;
     };
 }  // namespace ant
