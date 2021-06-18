@@ -35,12 +35,13 @@ namespace ant {
         }
     };
 
-    inline Signature GetTypeSignature(IDType Id) noexcept {
+    inline static Signature GetTypeSignature(IDType Id) noexcept {
         return Signature(1ULL << static_cast<uint64_t>(Id));
     }
 
     template <typename T>
-    inline Signature GetTypeSignature() noexcept {
-        return GetTypeSignature(TypeIdGenerator::GetTypeID<T>());
+    inline static Signature GetTypeSignature() noexcept {
+        static Signature signature = GetTypeSignature(TypeIdGenerator::GetTypeID<T>());
+        return signature;
     }
 }  // namespace ant

@@ -71,8 +71,7 @@ namespace ant {
          * \return a Multiview<Entity,Cs...>
          */
         template <typename... Cs>
-     auto GetComponents(ChunkID chunkid
-                                                       = NULL_CHUNK);
+        auto GetComponents(ChunkID chunkid = NULL_CHUNK);
 
         /**
          * \brief Get all given Component from an entity
@@ -250,9 +249,8 @@ namespace ant {
     auto Registry::GetComponents(ChunkID chunkID) {
         ArchetypeID archetypeId = ArchetypeID{
             static_cast<ComponentTypeID>(TypeIdGenerator::GetTypeID<Cs>())...};
-        std::ranges::sort(archetypeId);
-        return build_multiarchetype_view<Cs...>(archetypeId, &archetypeMap,
-                                                chunkID);
+        return ArchetypeMapView<Cs...>{&archetypeMap,
+                                BuildArchetypeSignature(archetypeId)};
     }
 
     template <typename... Cs>
