@@ -29,7 +29,6 @@ cmake -Sbenchmark -Bbuild/bench
 cmake --build build/bench --config Release
 cd build/bench/Release
 antity_benchmark.exe
-
 ```
 
 ## Usage Design 
