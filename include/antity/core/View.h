@@ -106,15 +106,15 @@ namespace ant {
             }
 
             [[nodiscard]] pointer operator->() const {
-                return std::make_tuple(&(owner->archetype->entities[index]),
+                return pointer{&(owner->archetype->entities[index]),
                                        &(std::get<ComponentArray<Cs>>(
-                                           owner->componentArrays)[index])...);
+                                           owner->componentArrays)[index])...};
             }
 
             [[nodiscard]] reference operator*() const {
-                return std::tie(owner->archetype->entities[index],
+                return reference{owner->archetype->entities[index],
                                 std::get<ComponentArray<Cs>>(
-                                    owner->componentArrays)[index]...);
+                                    owner->componentArrays)[index]...};
             }
 
            private:
@@ -175,27 +175,29 @@ namespace ant {
                   owner(owner) {
                 if (archetypeSignatureIterator
                     != owner->archetypeMap->signaturesEnd()) {
-                    owner->currentView
+                    currentView
                         = ArchetypeView<Cs...>(owner->archetypeMap->GetArchetype(
                             *archetypeSignatureIterator));
-                    archetypeViewIterator = owner->currentView.begin();
+                    archetypeViewIterator = currentView.begin();
+                    archetypeViewEnd = currentView.end();
                 }
             }
 
             archetyep_map_iterator& operator++() noexcept {
-                if (++archetypeViewIterator == owner->currentView.end()) {
+                if (++archetypeViewIterator == archetypeViewEnd) {
                     do {
-                        archetypeSignatureIterator++;
-                        if (archetypeSignatureIterator
+                        if (++archetypeSignatureIterator
                             == owner->archetypeMap->signaturesEnd()) {
                             return *this;
                         }
                     } while ((owner->include
                              & ~(*archetypeSignatureIterator)).any());
 
-                    owner->currentView
+
+                    currentView
                         = ArchetypeView<Cs...>(owner->archetypeMap->GetArchetype(*archetypeSignatureIterator));
-                    archetypeViewIterator = owner->currentView.begin();
+                    archetypeViewIterator = currentView.begin();
+                    archetypeViewEnd = currentView.end();
                 }
                 return *this;
             }
@@ -225,7 +227,9 @@ namespace ant {
             }
 
            private:
+            ArchetypeView<Cs...> currentView;
             archetype_iterator archetypeViewIterator;
+            archetype_iterator archetypeViewEnd;
             archetype_signature_iterator archetypeSignatureIterator;
             ArchetypeMapView* owner;
         };
@@ -233,17 +237,16 @@ namespace ant {
         ArchetypeMapView(ArchetypeMap* archetypeMap, Signature include)
             : archetypeMap(archetypeMap), include(include) {}
 
-        auto begin() {
+        inline auto begin() {
             return archetyep_map_iterator{
                 archetypeMap->signaturesBegin(include), this};
         }
 
-        auto end() {
+        inline auto end() {
             return archetyep_map_iterator{archetypeMap->signaturesEnd(), this};
         }
 
        private:
-        ArchetypeView<Cs...> currentView;
         Signature include;
         ArchetypeMap* archetypeMap;
     };
