@@ -60,12 +60,17 @@ namespace ant {
         return signature;
     }
 
-    inline auto BuildArchetypeSignature(const ArchetypeID& archetypeID) {
+    inline auto BuildArchetypeSignature(const std::initializer_list<Signature>& archetypeID) {
         Signature signature;
         for (auto componentId : archetypeID) {
-            signature |= GetTypeSignature(componentId);
+            signature |= componentId;
         }
         return signature;
+    }
+
+    template <typename... Cs>
+    inline auto GetArchetypeSignature(){
+        return Signature{((GetTypeSignature<Cs>()) |= ...)};
     }
 
 }  // namespace ant
