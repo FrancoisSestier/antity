@@ -246,11 +246,9 @@ namespace ant {
     }
 
     template <typename... Cs>
-    auto Registry::GetComponents(ChunkID chunkID) {
-        ArchetypeID archetypeId = ArchetypeID{
-            static_cast<ComponentTypeID>(TypeIdGenerator::GetTypeID<Cs>())...};
+    inline auto Registry::GetComponents(ChunkID chunkID) {
         return ArchetypeMapView<Cs...>{&archetypeMap,
-                                BuildArchetypeSignature(archetypeId)};
+                                GetArchetypeSignature<Cs...>()};
     }
 
     template <typename... Cs>
