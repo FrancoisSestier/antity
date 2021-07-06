@@ -2,6 +2,7 @@
 #include <nanobench.h>
 #include <antity/antity.h>
 #include <entt/entt.hpp>
+#include <antity/core/Archetype.h>
 
 enum ECS : uint8_t
 {
@@ -202,8 +203,25 @@ void CompBenchmark(const std::vector<size_t>& v) {
     }
 }
 
+void UtilityBenchmark(){
+
+    ankerl::nanobench::Bench().run("GetTypeSignature",[&]{
+        ant::GetTypeSignature<int>();
+    });
+
+    ankerl::nanobench::Bench().run("getArchetypeSingature",[&]{
+        ant::GetArchetypeSignature<int>();
+    });
+
+}
+
+
 int main() {
     std::vector<size_t> v = {1,10,100,1000,100000,1000000};
     //EmptyEntitiesBenchmmark(v);
+    UtilityBenchmark();
+
     CompBenchmark(v);
+
+
 }
