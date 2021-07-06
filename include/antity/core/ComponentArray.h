@@ -109,12 +109,9 @@ namespace ant {
     };
 
     template <typename T>
-    auto GetComponentArray(Archetype* archetype) {
-        auto typeId = TypeIdGenerator::GetTypeID<T>();
-        auto arch = archetype;
-
+    inline auto GetComponentArray(Archetype* archetype) {
         for (int i = 0; i < archetype->archetypeId.size(); i++) {
-            if (typeId == archetype->archetypeId.at(i)) {
+            if (TypeIdGenerator::GetTypeID<T>() == archetype->archetypeId.at(i)) {
                 return (ComponentArray<std::remove_reference_t<T>>(
                     &archetype->byteArrays[i]));
             }
