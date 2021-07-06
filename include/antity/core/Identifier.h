@@ -41,7 +41,6 @@ namespace ant {
 
     template <typename T>
     inline static Signature GetTypeSignature() noexcept {
-        static Signature signature = GetTypeSignature(TypeIdGenerator::GetTypeID<T>());
-        return signature;
+        return GetTypeSignature(TypeIdGenerator::GetTypeID<T>());
     }
 }  // namespace ant
