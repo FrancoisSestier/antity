@@ -116,7 +116,7 @@ namespace ant {
 
         const Record record = entity_index_->at(e);
 
-        archetype* oldarchetype = record.archetype;
+        archetype* oldarchetype = record.entity_archetype;
         archetype* newarchetype;
 
         if (oldarchetype == nullptr) {
@@ -171,7 +171,7 @@ namespace ant {
             }
         }
 
-        entity_index_->at(e).archetype = newarchetype;
+        entity_index_->at(e).entity_archetype = newarchetype;
         entity_index_->at(e).index = newarchetype->entities.size();
         newarchetype->entities.push_back(e);
     }
@@ -180,7 +180,7 @@ namespace ant {
     void registry::remove(entity_t e) {
         const Record record = entity_index->at(e);
 
-        archetype* oldarchetype = record.archetype;
+        archetype* oldarchetype = record.entity_archetype;
         archetype* newarchetype = nullptr;
         component_id_t componentToRemoveTypeId = type_id_generator::get<C>();
         archetype_id_t newarchetype_id = oldarchetype->archetype_id;
@@ -265,6 +265,6 @@ namespace ant {
     template <typename... Cs>
     std::tuple<Cs&...> registry::get_entity_components(entity_t e) {
         return archetype_handler_.get_components<Cs...>(
-            entity_index_->at(e).archetype, entity_index_->at(e).index);
+            entity_index_->at(e).entity_archetype, entity_index_->at(e).index);
     }
 }  // namespace ant

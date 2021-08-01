@@ -6,7 +6,7 @@
 namespace ant {
 
     struct Record {
-        archetype* archetype = nullptr;
+        archetype* entity_archetype = nullptr;
         index_t index = 0;
         chunk_id_t chunk_id = 0;
     };
