@@ -258,7 +258,7 @@ namespace ant {
 
     template <typename... Cs>
     inline auto registry::get(chunk_id_t chunkID) {
-        return archetype_mapView<Cs...>{&archetype_map_,
+        return archetype_map_view<Cs...>{&archetype_map_,
                                         get_signature<Cs...>()};
     }
 

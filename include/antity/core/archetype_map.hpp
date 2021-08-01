@@ -46,7 +46,7 @@ namespace ant {
                                 });
         }
 
-        auto signaturesEnd() { return archetype_signatures_.end(); }
+        auto signatures_end() { return archetype_signatures_.end(); }
 
         /**
          * @brief deletes archetype associated with given key
