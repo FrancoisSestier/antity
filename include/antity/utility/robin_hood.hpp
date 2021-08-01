@@ -385,7 +385,7 @@ namespace robin_hood {
             return t;
         }
 
-        // Allocates bulks of memory for objects of type T. This deallocates the
+        // allocates bulks of memory for objects of type T. This deallocates the
         // memory in the destructor, and keeps a linked list of the allocated
         // memory around. Overhead per allocation is the size of a pointer.
         template <typename T, size_t MinNumAllocs = 4,
@@ -555,8 +555,9 @@ namespace robin_hood {
 
             // enforce byte alignment of the T's
 #if ROBIN_HOOD(CXX) >= ROBIN_HOOD(CXX14)
-            static constexpr size_t ALIGNMENT = (std::max)(
-                std::alignment_of<T>::value, std::alignment_of<T*>::value);
+            static constexpr size_t ALIGNMENT
+                = (std::max)(std::alignment_of<T>::value,
+                             std::alignment_of<T*>::value);
 #else
             static const size_t ALIGNMENT
                 = (ROBIN_HOOD_STD::alignment_of<T>::value
@@ -912,7 +913,7 @@ namespace robin_hood {
     namespace detail {
 
         template <typename T>
-        struct void_type {
+        struct void_t {
             using type = void;
         };
 
@@ -921,7 +922,7 @@ namespace robin_hood {
 
         template <typename T>
         struct has_is_transparent<
-            T, typename void_type<typename T::is_transparent>::type>
+            T, typename void_t<typename T::is_transparent>::type>
             : public std::true_type {};
 
         // using wrapper classes for hash and key_equal prevents the diamond
@@ -2335,8 +2336,8 @@ namespace robin_hood {
             }
 
             ROBIN_HOOD(NODISCARD)
-            size_t
-                calcMaxNumElementsAllowed(size_t maxElements) const noexcept {
+            size_t calcMaxNumElementsAllowed(
+                size_t maxElements) const noexcept {
                 if (ROBIN_HOOD_LIKELY(maxElements
                                       <= (std::numeric_limits<size_t>::max)()
                                              / 100)) {

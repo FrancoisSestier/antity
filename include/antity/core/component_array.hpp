@@ -1,4 +1,4 @@
-#include "Archetype.h"
+#include <antity/core/archetype.hpp>
 
 namespace ant {
 
@@ -13,7 +13,8 @@ namespace ant {
 
             ComponentIterator() : m_ptr(nullptr) {}
             ComponentIterator(C* rhs) : m_ptr(rhs) {}
-            ComponentIterator(const ComponentIterator& rhs) : m_ptr(rhs.m_ptr) {}
+            ComponentIterator(const ComponentIterator& rhs)
+                : m_ptr(rhs.m_ptr) {}
 
             pointer get() { return m_ptr; }
 
@@ -74,10 +75,12 @@ namespace ant {
                 return m_ptr <= rhs.m_ptr;
             }
 
-            friend bool operator==(const ComponentIterator& a, const ComponentIterator& b) {
+            friend bool operator==(const ComponentIterator& a,
+                                   const ComponentIterator& b) {
                 return a.m_ptr == b.m_ptr;
             };
-            friend bool operator!=(const ComponentIterator& a, const ComponentIterator& b) {
+            friend bool operator!=(const ComponentIterator& a,
+                                   const ComponentIterator& b) {
                 return a.m_ptr != b.m_ptr;
             };
 
@@ -86,7 +89,7 @@ namespace ant {
         };
         ComponentArray() = default;
 
-        ComponentArray(ByteArray* byteArray)
+        ComponentArray(byte_array* byteArray)
             : data(reinterpret_cast<C*>(byteArray->componentData)),
               byteArray(byteArray) {}
 
@@ -105,13 +108,13 @@ namespace ant {
         int16_t size() { return byteArray->size; }
 
         C* data{nullptr};
-        ByteArray* byteArray{nullptr};
+        byte_array* byteArray{nullptr};
     };
 
     template <typename T>
-    inline auto GetComponentArray(Archetype* archetype) {
-        for (int i = 0; i < archetype->archetypeId.size(); i++) {
-            if (TypeIdGenerator::GetTypeID<T>() == archetype->archetypeId.at(i)) {
+    inline auto get_componentArray(archetype* archetype) {
+        for (int i = 0; i < archetype->archetype_id.size(); i++) {
+            if (type_id_generator::get<T>() == archetype->archetype_id.at(i)) {
                 return (ComponentArray<std::remove_reference_t<T>>(
                     &archetype->byteArrays[i]));
             }

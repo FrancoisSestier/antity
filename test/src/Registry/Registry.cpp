@@ -1,12 +1,12 @@
 #include <gtest/gtest.h>
-#include <antity/core/Registry.h>
+#include <antity/core/registry.hpp>
 using namespace ant;
 
-TEST(Registry,CreateEntity)
+TEST(Registry,Createentity)
 {
-	Registry reg;
-	Entity entityA = reg.CreateEntity();
-	Entity entityB = reg.CreateEntity();
+	registry reg;
+	entity_t entityA = reg.create();
+	entity_t entityB = reg.create();
 
 	ASSERT_NE(entityA, entityB);
 	ASSERT_EQ(entityA, 1);
@@ -15,49 +15,49 @@ TEST(Registry,CreateEntity)
 
 TEST(Registry, RegisterComponent)
 {
-	Registry reg;
-	reg.RegisterComponent<int>();
-	reg.RegisterComponent<char>();
+	registry reg;
+	reg.save<int>();
+	reg.save<char>();
 	
 }
 
 TEST(Registry, AddComponent)
 {
-	Registry reg;
+	registry reg;
 	
-	reg.RegisterComponent<int>();
-	reg.RegisterComponent<float>();
+	reg.save<int>();
+	reg.save<float>();
 
-	Entity entity = reg.CreateEntity();
+	entity_t entity_t = reg.create();
 	
-	reg.AddComponent<int>(entity, 1);
-	reg.AddComponent<float>(entity, .4f);
+	reg.add<int>(entity_t, 1);
+	reg.add<float>(entity_t, .4f);
 	
 }
 
-TEST(Registry, GetComponents)
+TEST(Registry, get_components)
 {
-	Registry reg;
+	registry reg;
 
-	ChunkID id = 0;
+	chunk_id_t id = 0;
 
-	reg.RegisterComponent<int>();
-	reg.RegisterComponent<float>();
-	reg.RegisterComponent<char>();
+	reg.save<int>();
+	reg.save<float>();
+	reg.save<char>();
 
-	Entity entity = reg.CreateEntity();
-	Entity other = reg.CreateEntity();
+	entity_t entity = reg.create();
+	entity_t other = reg.create();
 
-	reg.AddComponent<int>(entity, 1);
-	reg.AddComponent<int>(other, 10);
-	reg.AddComponent<float>(entity, .4f);
-	reg.AddComponent<char>(other, 'c');
+	reg.add<int>(entity, 1);
+	reg.add<int>(other, 10);
+	reg.add<float>(entity, .4f);
+	reg.add<char>(other, 'c');
 
 	int counter = 0;
 
-	reg.GetComponents<int>();
+	reg.get<int>();
 
-	for(auto[e,i,f] : reg.GetComponents<int, float>())
+	for(auto[e,i,f] : reg.get<int, float>())
 	{
 		
 		counter ++;
@@ -67,7 +67,7 @@ TEST(Registry, GetComponents)
 		f = .5f;
 	}
 
-	auto [j] = reg.GetEntityComponents<float>(entity);
+	auto [j] = reg.get_entity_components<float>(entity);
 	ASSERT_EQ(j, .5f);
 
 	ASSERT_EQ(counter, 1);
