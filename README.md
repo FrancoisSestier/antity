@@ -15,6 +15,22 @@ All simillar archetypes can be divided in as many chunks as you want. get_compon
 Two entities that have the same collection of components and the same chunkID will be stored in the same archetype.  
 All entities in the same archetype are guarenteed to have their components stored in contiguous arrays.  
 
+## Run Test and Benchmark :
+antity is using [google-test](https://github.com/google/googletest) and [nanobench](https://github.com/martinus/nanobench) for unit testing and benchmarking
+-to run tests :
+```
+cmake -Stest -Bbuild/test
+cmake --build build/test --config Debug
+ctest --test-dir build/test --build-config Debug
+```
+-to run benchmark :
+```
+cmake -Sbenchmark -Bbuild/bench
+cmake --build build/bench --config Release
+cd build/bench/Release
+antity_benchmark.exe
+```
+
 ## Usage Design 
 The API is as simple as it can be :  
 
