@@ -178,7 +178,7 @@ namespace ant {
 
     template <typename C>
     void registry::remove(entity_t e) {
-        const Record record = entity_index->at(e);
+        const Record record = entity_index_->at(e);
 
         archetype* oldarchetype = record.entity_archetype;
         archetype* newarchetype = nullptr;
@@ -193,7 +193,7 @@ namespace ant {
         const auto oldIndex = record.index;
         const auto Lastentity_index = oldarchetype->entities.size() - 1;
         if (newarchetype_id.size() != 0) {
-            newarchetype = archetype_map.get(
+            newarchetype = archetype_map_.get(
                 archetype_key{newarchetype_id, oldarchetype->chunk_id});
             entity_index_->at(e).archetype = newarchetype;
             entity_index_->at(e).index = newarchetype->entities.size();

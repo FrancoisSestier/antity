@@ -339,8 +339,8 @@ namespace ant {
         chunk_id_t chunk_id = _null_chunk) {
         multi_archetype_view<Cs...> multiarchetypeView;
         for (auto&& archetype : *archetype_map->get()) {
-            if (!std::ranges::includes(archetype.second->archetype_id_t.begin(),
-                                       archetype.second->archetype_id_t.end(),
+            if (!std::ranges::includes(archetype.second->archetype_id.begin(),
+                                       archetype.second->archetype_id.end(),
                                        archetype_id_t.begin(),
                                        archetype_id_t.end())) {
                 continue;
