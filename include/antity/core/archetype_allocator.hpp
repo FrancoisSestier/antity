@@ -35,7 +35,7 @@ namespace ant {
        private:
         void DoubleAllocation(archetype* archetype, size_t componentIndex,
                               component_base* component) {
-            auto newSize = archetype->byteArrays.at(componentIndex).size * 2
+            auto newSize = archetype->byte_arrays.at(componentIndex).size * 2
                            + component->get_size();
             Resize(archetype, componentIndex, component, newSize);
         }
@@ -51,20 +51,20 @@ namespace ant {
             size_t componentSize = component->get_size();
             auto* newData = component->allocate(newSize);
             for (std::size_t e = 0; e < archetype->entities.size(); ++e) {
-                component->mode_data(&archetype->byteArrays[componentIndex]
+                component->mode_data(&archetype->byte_arrays[componentIndex]
                                           .componentData[e * componentSize],
                                      &newData[e * componentSize]);
-                component->destroy_data(&archetype->byteArrays[componentIndex]
+                component->destroy_data(&archetype->byte_arrays[componentIndex]
                                              .componentData[e * componentSize]);
             }
-            delete[] archetype->byteArrays[componentIndex].componentData;
-            archetype->byteArrays.at(componentIndex).size = newSize;
-            archetype->byteArrays[componentIndex].componentData = newData;
+            delete[] archetype->byte_arrays[componentIndex].componentData;
+            archetype->byte_arrays.at(componentIndex).size = newSize;
+            archetype->byte_arrays[componentIndex].componentData = newData;
         }
 
         bool NeedsSpace(archetype* archetype, size_t componentIndex,
                         size_t componentSize) {
-            size_t allocated = archetype->byteArrays.at(componentIndex).size;
+            size_t allocated = archetype->byte_arrays.at(componentIndex).size;
             size_t needed
                 = archetype->entities.size() * componentSize + componentSize;
             return needed > allocated;
@@ -72,7 +72,7 @@ namespace ant {
 
         bool NeedsShriking(archetype* archetype, size_t componentIndex,
                            size_t componentSize) {
-            size_t allocated = archetype->byteArrays.at(componentIndex).size;
+            size_t allocated = archetype->byte_arrays.at(componentIndex).size;
             size_t used = archetype->entities.size() * componentSize;
             return allocated > used / 2;
         }

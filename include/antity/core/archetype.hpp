@@ -14,7 +14,7 @@ namespace ant {
     };
 
     struct archetype_key {
-        archetype_id archetype_id;
+        archetype_id_t archetype_id;
         chunk_id_t chunk_id;
 
         struct hasher {
@@ -44,33 +44,33 @@ namespace ant {
     };
 
     struct archetype {
-        archetype_id archetype_id;
-        signature archetypesignature;
+        archetype_id_t archetype_id;
+        signature_t signature;
         chunk_id_t chunk_id;
-        std::vector<byte_array> byteArrays;
+        std::vector<byte_array> byte_arrays;
         std::vector<entity_t> entities;
     };
 
     inline auto build_archetype_signature(const archetype* archetype) {
-        signature signature;
+        signature_t signature_t;
         for (auto componentId : archetype->archetype_id) {
-            signature |= get_type_signature(componentId);
+            signature_t |= get_type_signature(componentId);
         }
-        return signature;
+        return signature_t;
     }
 
     inline auto build_archetype_signature(
-        const std::initializer_list<signature>& archetype_id) {
-        signature signature;
+        const std::initializer_list<signature_t>& archetype_id) {
+        signature_t signature_t;
         for (auto componentId : archetype_id) {
-            signature |= componentId;
+            signature_t |= componentId;
         }
-        return signature;
+        return signature_t;
     }
 
     template <typename... Cs>
     inline auto get_signature() {
-        return signature{((get_type_signature<Cs>()) |= ...)};
+        return signature_t{((get_type_signature<Cs>()) |= ...)};
     }
 
 }  // namespace ant

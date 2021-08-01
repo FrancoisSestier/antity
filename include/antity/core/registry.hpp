@@ -121,14 +121,14 @@ namespace ant {
 
         if (oldarchetype == nullptr) {
             newarchetype = archetype_map_.get(archetype_key{
-                archetype_id{newComponentTypeId}, record.chunk_id});
+                archetype_id_t{newComponentTypeId}, record.chunk_id});
             component_base* component
                 = component_map_->at(newComponentTypeId).get();
             archetype_handler_.emplace_component<C>(
                 newarchetype, component, 0, std::forward<Args>(args)...);
         } else {
-            archetype_id oldarchetype_id = oldarchetype->archetype_id;
-            archetype_id newarchetype_id = oldarchetype_id;
+            archetype_id_t oldarchetype_id = oldarchetype->archetype_id;
+            archetype_id_t newarchetype_id = oldarchetype_id;
             newarchetype_id.push_back(newComponentTypeId);
             std::ranges::sort(newarchetype_id);
             newarchetype = archetype_map_.get(
@@ -136,7 +136,7 @@ namespace ant {
             const auto oldIndex = record.index;
             const auto Lastentity_index = oldarchetype->entities.size() - 1;
             int oldCompIndex = 0;
-            for (int i = 0; i < newarchetype->byteArrays.size(); i++) {
+            for (int i = 0; i < newarchetype->byte_arrays.size(); i++) {
                 component_id_t componentTypeId
                     = newarchetype->archetype_id.at(i);
                 component_base* component
@@ -183,7 +183,7 @@ namespace ant {
         archetype* oldarchetype = record.archetype;
         archetype* newarchetype = nullptr;
         component_id_t componentToRemoveTypeId = type_id_generator::get<C>();
-        archetype_id newarchetype_id = oldarchetype->archetype_id;
+        archetype_id_t newarchetype_id = oldarchetype->archetype_id;
         auto componentToRemove
             = std::ranges::find(newarchetype_id.begin(), newarchetype_id.end(),
                                 componentToRemoveTypeId);
@@ -200,7 +200,7 @@ namespace ant {
             newarchetype->entities.push_back(e);
         }
         int c = 0;
-        for (int i = 0; i < oldarchetype->byteArrays.size(); i++) {
+        for (int i = 0; i < oldarchetype->byte_arrays.size(); i++) {
             component_base* component
                 = component_map_->at(oldarchetype->archetype_id.at(i)).get();
             if (i != componentToRemoveIndex && newarchetype_id.size() != 0) {

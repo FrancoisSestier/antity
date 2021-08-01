@@ -13,8 +13,8 @@ namespace ant {
     inline constexpr id_t _null_entity = 0;
     inline constexpr id_t _null_chunk = UINT32_MAX;
     inline constexpr uint16_t _max_components = 64;
-    using signature = std::bitset<_max_components>;
-    using archetype_id = std::vector<component_id_t>;
+    using signature_t = std::bitset<_max_components>;
+    using archetype_id_t = std::vector<component_id_t>;
 
     class type_id_generator {
         inline static id_t identifier() noexcept {
@@ -36,12 +36,12 @@ namespace ant {
         }
     };
 
-    inline static signature get_type_signature(id_t Id) noexcept {
-        return signature(1ULL << static_cast<uint64_t>(Id));
+    inline static signature_t get_type_signature(id_t Id) noexcept {
+        return signature_t(1ULL << static_cast<uint64_t>(Id));
     }
 
     template <typename T>
-    inline static signature get_type_signature() noexcept {
+    inline static signature_t get_type_signature() noexcept {
         return get_type_signature(type_id_generator::get<T>());
     }
 }  // namespace ant

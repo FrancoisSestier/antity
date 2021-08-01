@@ -19,7 +19,7 @@ namespace ant {
             archetype_allocator_.auto_allocate(archetype, componentIndex,
                                                component);
             C* newComponent
-                = new (&archetype->byteArrays[componentIndex]
+                = new (&archetype->byte_arrays[componentIndex]
                             .componentData[archetype->entities.size()
                                            * component->get_size()])
                     C(std::forward<Args>(args)...);
@@ -41,19 +41,19 @@ namespace ant {
                                                    component);
             }
             size_t componentSize = component->get_size();
-            component->mode_data(&from->byteArrays[oldComponentIndex]
+            component->mode_data(&from->byte_arrays[oldComponentIndex]
                                       .componentData[fromIndex * componentSize],
-                                 &to->byteArrays[newComponentIndex]
+                                 &to->byte_arrays[newComponentIndex]
                                       .componentData[toIndex * componentSize]);
             component->destroy_data(
-                &from->byteArrays[oldComponentIndex]
+                &from->byte_arrays[oldComponentIndex]
                      .componentData[fromIndex * componentSize]);
         }
 
         void erase_component(archetype* archetype, const size_t index,
                              size_t ComponentIndex, component_base* component) {
             component->destroy_data(
-                &archetype->byteArrays[ComponentIndex]
+                &archetype->byte_arrays[ComponentIndex]
                      .componentData[index * component->get_size()]);
             archetype_allocator_.auto_shrink(archetype, ComponentIndex,
                                              component);
@@ -66,16 +66,16 @@ namespace ant {
          * \param archetype
          */
         void clean_archetype_component_arrays(archetype* archetype) {
-            for (size_t j = 0; j < archetype->byteArrays.size(); j++) {
+            for (size_t j = 0; j < archetype->byte_arrays.size(); j++) {
                 auto component
                     = component_map_->at(archetype->archetype_id[j]).get();
                 for (size_t i = 0; i < archetype->entities.size(); i++) {
                     component->destroy_data(
-                        &archetype->byteArrays[j]
+                        &archetype->byte_arrays[j]
                              .componentData[i * component->get_size()]);
                 }
-                delete[] archetype->byteArrays[j].componentData;
-                archetype->byteArrays[j].size = 0;
+                delete[] archetype->byte_arrays[j].componentData;
+                archetype->byte_arrays[j].size = 0;
             }
         }
 
@@ -93,7 +93,7 @@ namespace ant {
                                     type_id_generator::get<C>())
                   - archetype->archetype_id.begin();
             return *std::launder(
-                reinterpret_cast<C*>(&archetype->byteArrays[componentIndex]
+                reinterpret_cast<C*>(&archetype->byte_arrays[componentIndex]
                                           .componentData[index * sizeof(C)]));
         }
 

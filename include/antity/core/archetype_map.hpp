@@ -29,20 +29,20 @@ namespace ant {
         }
 
         /**
-         * @brief Get the archetype for given signature
+         * @brief Get the archetype for given signature_t
          *
-         * @param signature requested archetype signature
+         * @param signature_t requested archetype signature_t
          * @return archetype* requested archetype
          */
-        archetype* get(const signature& signature) {
-            return signature_archetype_map_.at(signature);
+        archetype* get(const signature_t& signature_t) {
+            return signature_archetype_map_.at(signature_t);
         }
 
-        auto signaturesBegin(const signature& match) {
+        auto signaturesBegin(const signature_t& match) {
             return std::find_if(archetype_signatures_.begin(),
                                 archetype_signatures_.end(),
-                                [&](const signature& signature) {
-                                    return (match & ~signature).none();
+                                [&](const signature_t& signature_t) {
+                                    return (match & ~signature_t).none();
                                 });
         }
 
@@ -63,17 +63,17 @@ namespace ant {
 
         /**
          * \brief Retrieve all archetypes that have at least all components in
-         * givent ArchetpeKey \param archetype_id \param chunk_id \return
+         * givent ArchetpeKey \param archetype_id_t \param chunk_id \return
          * vector<archetype*>
          */
-        std::vector<archetype*> gets(archetype_id archetype_id,
+        std::vector<archetype*> gets(archetype_id_t archetype_id_t,
                                      chunk_id_t chunk_id = _null_chunk) {
             std::vector<archetype*> archetypes;
             for (auto&& archetype : archetype_hashtable_) {
                 if (!std::ranges::includes(
                         archetype.second->archetype_id.begin(),
                         archetype.second->archetype_id.end(),
-                        archetype_id.begin(), archetype_id.end())) {
+                        archetype_id_t.begin(), archetype_id_t.end())) {
                     continue;
                 }
                 if (chunk_id != _null_chunk
@@ -95,30 +95,30 @@ namespace ant {
                                          std::move(newarchetype));
             for (auto&& componentID : archetype_key.archetype_id) {
                 archetype_hashtable_.at(archetype_key)
-                    ->byteArrays.push_back(byte_array{new std::byte[0], 0});
+                    ->byte_arrays.push_back(byte_array{new std::byte[0], 0});
             }
             register_archetype_signature(
                 archetype_hashtable_.at(archetype_key).get());
         }
 
         inline void register_archetype_signature(archetype* archetype) {
-            archetype->archetypesignature
+            archetype->signature
                 = build_archetype_signature(archetype);
-            archetype_signatures_.emplace_back(archetype->archetypesignature);
-            signature_archetype_map_.emplace(archetype->archetypesignature,
+            archetype_signatures_.emplace_back(archetype->signature);
+            signature_archetype_map_.emplace(archetype->signature,
                                              archetype);
         }
 
-        inline void deregister_archetype_signature(archetype* archetype) {
+        inline void deregister_archetype_signature(archetype* arch) {
             archetype_signatures_.erase(std::find(
                 archetype_signatures_.begin(), archetype_signatures_.end(),
-                archetype->archetypesignature));
-            signature_archetype_map_.erase(archetype->archetypesignature);
+                arch->signature));
+            signature_archetype_map_.erase(arch->signature);
         }
 
        private:
         archetype_hashtable archetype_hashtable_;
-        std::vector<signature> archetype_signatures_;
-        std::unordered_map<signature, archetype*> signature_archetype_map_;
+        std::vector<signature_t> archetype_signatures_;
+        std::unordered_map<signature_t, archetype*> signature_archetype_map_;
     };
 }  // namespace ant

@@ -116,7 +116,7 @@ namespace ant {
         for (int i = 0; i < archetype->archetype_id.size(); i++) {
             if (type_id_generator::get<T>() == archetype->archetype_id.at(i)) {
                 return (ComponentArray<std::remove_reference_t<T>>(
-                    &archetype->byteArrays[i]));
+                    &archetype->byte_arrays[i]));
             }
         }
 
