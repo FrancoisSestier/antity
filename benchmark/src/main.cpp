@@ -2,7 +2,7 @@
 #include <nanobench.h>
 #include <antity/antity.h>
 #include <entt/entt.hpp>
-#include <antity/core/Archetype.h>
+#include <antity/core/archetype.hpp>
 
 enum ECS : uint8_t
 {
@@ -48,8 +48,8 @@ public:
     entity_type create() { return entityManager.create(); };
 
     template<typename C, typename ...Args>
-    void add_component(entity_type entity, Args&& ...args) {
-        entityManager.emplace<C>(entity, std::forward<Args>(args)...);
+    void add_component(entity_type entity_t, Args&& ...args) {
+        entityManager.emplace<C>(entity_t, std::forward<Args>(args)...);
     }
 
 
@@ -68,16 +68,16 @@ class reg<_ant> {
 public:
     using type = typename ant::Registry;
     using entity_type = ant::Registry::entity_type;
-    entity_type create() { return entityManager.CreateEntity(); };
+    entity_type create() { return entityManager.Createentity(); };
 
     template<typename C, typename ...Args>
-    void add_component(entity_type entity, Args&& ...args) {
-        entityManager.AddComponent<C>(entity, std::forward<Args>(args)...);
+    void add_component(entity_type entity_t, Args&& ...args) {
+        entityManager.add<C>(entity_t, std::forward<Args>(args)...);
     }
 
     template<typename ...Cs>
     auto get_components() {
-        return entityManager.GetComponents<Cs...>();
+        return entityManager.get<Cs...>();
     }
 
 
@@ -94,7 +94,7 @@ void EmptyEntitiesBench( size_t count) {
     ankerl::nanobench::Bench().run(( std::to_string(count) + " empty entities : " + to_string<ecs>()), [&] {
             for (size_t i = 0; i < count; i++)
             {
-                auto entity = registry.create();
+                auto entity_t = registry.create();
             }
     });
 }
@@ -105,15 +105,15 @@ void EntitiesWithComps(size_t count) {
     ankerl::nanobench::Bench().run(std::to_string(count) + " entities with " + std::to_string(comp_count) + " Comp " + to_string<ecs>(), [&] {
         for (size_t i = 0; i < count; i++)
         {
-            auto entity = registry.create();
+            auto entity_t = registry.create();
             if constexpr (comp_count >= 1) {
-                registry.add_component<position>(entity, position{ .5f,.8f });
+                registry.add_component<position>(entity_t, position{ .5f,.8f });
             }
             if constexpr (comp_count >= 2) {
-                registry.add_component<speed>(entity, speed{ .5f,.8f });
+                registry.add_component<speed>(entity_t, speed{ .5f,.8f });
             }
             if constexpr (comp_count >= 3) {
-                registry.add_component<acceleration>(entity, acceleration{ .5f, .8f });
+                registry.add_component<acceleration>(entity_t, acceleration{ .5f, .8f });
             }
         }
     });
@@ -125,15 +125,15 @@ void SystemBench(size_t count) {
     auto registry = reg<ecs>();
     for (size_t i = 0; i < count; i++)
     {
-        auto entity = registry.create();
+        auto entity_t = registry.create();
         if constexpr (comp_count >= 1) {
-            registry.add_component<position>(entity, position{ .5f,.8f });
+            registry.add_component<position>(entity_t, position{ .5f,.8f });
         }
         if constexpr (comp_count >= 2) {
-            registry.add_component<speed>(entity, speed{ .5f,.8f });
+            registry.add_component<speed>(entity_t, speed{ .5f,.8f });
         }
         if constexpr (comp_count >= 3) {
-            registry.add_component<acceleration>(entity, acceleration{ .5f, .8f });
+            registry.add_component<acceleration>(entity_t, acceleration{ .5f, .8f });
         }
     }
 
@@ -205,12 +205,12 @@ void CompBenchmark(const std::vector<size_t>& v) {
 
 void UtilityBenchmark(){
 
-    ankerl::nanobench::Bench().run("GetTypeSignature",[&]{
-        ant::GetTypeSignature<int>();
+    ankerl::nanobench::Bench().run("get_type_signature",[&]{
+        ant::get_type_signature<int>();
     });
 
-    ankerl::nanobench::Bench().run("getArchetypeSingature",[&]{
-        ant::GetArchetypeSignature<int>();
+    ankerl::nanobench::Bench().run("getSingature",[&]{
+        ant::get_signature<int>();
     });
 
 }
