@@ -195,7 +195,7 @@ namespace ant {
         if (newarchetype_id.size() != 0) {
             newarchetype = archetype_map_.get(
                 archetype_key{newarchetype_id, oldarchetype->chunk_id});
-            entity_index_->at(e).archetype = newarchetype;
+            entity_index_->at(e).entity_archetype = newarchetype;
             entity_index_->at(e).index = newarchetype->entities.size();
             newarchetype->entities.push_back(e);
         }
