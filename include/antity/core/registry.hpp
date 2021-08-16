@@ -207,8 +207,7 @@ namespace ant {
     template <typename C>
     void registry::remove_impl(archetype* old_archetype, entity_t entity,
                                record_t record) {
-        archetype* new_archetype = archetype* new_archetype
-            = archetype_map_.get_next_archetype_remove<C>(old_archetype);
+        archetype* new_archetype = archetype_map_.get_next_archetype_remove<C>(old_archetype);
 
         archetype_handler_.move_comp_to_and_omit<C>(
             old_archetype, new_archetype, record.index);
