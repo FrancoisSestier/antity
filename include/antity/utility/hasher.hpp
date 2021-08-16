@@ -40,5 +40,10 @@ namespace ant {
             return h;
         }
 
+        template<typename T>
+        static size_t hash(const T& v) {
+            return std::hash<T>(v);
+        }
+
     }  // namespace hash
 }  // namespace ant

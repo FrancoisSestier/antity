@@ -127,7 +127,7 @@ namespace ant {
         archetype_view(archetype* arch)
             : archetype_(arch),
               component_arrays_(
-                  std::make_tuple(get_componentArray<Cs>(arch)...)) {}
+                  std::make_tuple(get_component_array<Cs>(arch)...)) {}
 
         archetype_view_iterator begin() {
             return archetype_view_iterator{0, this};
@@ -157,7 +157,7 @@ namespace ant {
     template <typename... Cs>
     class archetype_map_view {
        public:
-        using archetype_signature_iterator = std::vector<signature_t>::iterator;
+        using archeytpe_key_iterator = std::vector<archetype_key>::iterator;
         using archetype_iterator
             = archetype_view<Cs...>::archetype_view_iterator;
         class archetyep_map_iterator {
@@ -169,7 +169,7 @@ namespace ant {
             using reference = archetype_iterator::reference;
 
             archetyep_map_iterator(
-                archetype_signature_iterator arch_signature_iterator,
+                archeytpe_key_iterator arch_signature_iterator,
                 archetype_map_view* owner)
                 : archetype_signature_iterator_(arch_signature_iterator),
                   owner(owner) {
@@ -189,7 +189,7 @@ namespace ant {
                             == owner->archetype_map_->signatures_end()) {
                             return *this;
                         }
-                    } while ((owner->include & ~(*archetype_signature_iterator_))
+                    } while ((owner->include_ & ~(*archetype_signature_iterator_).signature)
                                  .any());
 
                     current_view_ = archetype_view<Cs...>(
@@ -228,16 +228,16 @@ namespace ant {
             archetype_view<Cs...> current_view_;
             archetype_iterator archetype_view_iterator_;
             archetype_iterator archetype_view_end_;
-            archetype_signature_iterator archetype_signature_iterator_;
+            archeytpe_key_iterator archetype_signature_iterator_;
             archetype_map_view* owner;
         };
 
-        archetype_map_view(archetype_map* arch_map, signature_t include)
-            : archetype_map_(arch_map), include(include) {}
+        archetype_map_view(archetype_map* arch_map, signature_t include, chunk_id_t chunk_id)
+            : archetype_map_(arch_map), include_(include), chunk_id_(chunk_id) {}
 
         inline auto begin() {
             return archetyep_map_iterator{
-                archetype_map_->signaturesBegin(include), this};
+                archetype_map_->signatures_begin(archetype_key{include_,chunk_id_}), this};
         }
 
         inline auto end() {
@@ -245,7 +245,8 @@ namespace ant {
         }
 
        private:
-        signature_t include;
+        chunk_id_t chunk_id_;
+        signature_t include_;
         archetype_map* archetype_map_;
     };
 
@@ -335,14 +336,14 @@ namespace ant {
 
     template <typename... Cs>
     multi_archetype_view<Cs...> build_multiarchetype_view(
-        archetype_id_t archetype_id_t, archetype_map* archetype_map,
+        component_id_list component_id_list, archetype_map* archetype_map,
         chunk_id_t chunk_id = _null_chunk) {
         multi_archetype_view<Cs...> multiarchetypeView;
         for (auto&& archetype : *archetype_map->get()) {
             if (!std::ranges::includes(archetype.second->archetype_id.begin(),
                                        archetype.second->archetype_id.end(),
-                                       archetype_id_t.begin(),
-                                       archetype_id_t.end())) {
+                                       component_id_list.begin(),
+                                       component_id_list.end())) {
                 continue;
             }
             if (archetype.second->chunk_id != chunk_id

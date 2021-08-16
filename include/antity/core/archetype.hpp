@@ -2,6 +2,7 @@
 #include <antity/core/identifier.hpp>
 #include <antity/utility/hasher.hpp>
 #include <cstddef>
+#include <functional>
 
 namespace ant {
     struct archetype;
@@ -14,59 +15,43 @@ namespace ant {
     };
 
     struct archetype_key {
-        archetype_id_t archetype_id;
+        signature_t signature;
         chunk_id_t chunk_id;
+
+        inline bool operator==(const archetype_key& other) const {
+            if (this->signature != other.signature
+                || this->chunk_id != other.chunk_id) {
+                return false;
+            }
+            return true;
+        }
+
+        inline bool operator!=(const archetype_key& other) const {
+            return !(*this == other);
+        }
 
         struct hasher {
             size_t operator()(const archetype_key& key) const {
-                return hash::hash_combine(hash::hash(key.archetype_id),
-                                          hash::hash(key.chunk_id));
+                return hash::hash_combine(
+                    std::hash<signature_t>{}(key.signature),
+                    hash::hash(key.chunk_id));
             }
         };
 
         struct comparator {
             bool operator()(const archetype_key& lhs,
                             const archetype_key& rhs) const {
-                if (lhs.archetype_id.size() != rhs.archetype_id.size()
-                    || lhs.chunk_id != rhs.chunk_id) {
-                    return false;
-                }
-
-                for (size_t i = 0; i < lhs.archetype_id.size(); i++) {
-                    if (lhs.archetype_id[i] != rhs.archetype_id[i]) {
-                        return false;
-                    }
-                }
-
-                return true;
+                return lhs == rhs;
             }
         };
     };
 
     struct archetype {
-        archetype_id_t archetype_id;
-        signature_t signature;
-        chunk_id_t chunk_id;
+        const archetype_key key;
+        const component_id_list component_ids;
         std::vector<byte_array> byte_arrays;
         std::vector<entity_t> entities;
     };
-
-    inline auto build_archetype_signature(const archetype* archetype) {
-        signature_t signature_t;
-        for (auto componentId : archetype->archetype_id) {
-            signature_t |= get_type_signature(componentId);
-        }
-        return signature_t;
-    }
-
-    inline auto build_archetype_signature(
-        const std::initializer_list<signature_t>& archetype_id) {
-        signature_t signature_t;
-        for (auto componentId : archetype_id) {
-            signature_t |= componentId;
-        }
-        return signature_t;
-    }
 
     template <typename... Cs>
     inline auto get_signature() {

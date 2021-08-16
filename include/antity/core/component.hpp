@@ -12,7 +12,7 @@ namespace ant {
         virtual ~component_base() {}
 
         virtual void destroy_data(std::byte* data) const = 0;
-        virtual void mode_data(std::byte* source,
+        virtual void move_data(std::byte* source,
                                std::byte* destination) const = 0;
         virtual void construct_data(std::byte* data) const = 0;
 
@@ -33,7 +33,7 @@ namespace ant {
         };
 
         void destroy_data(std::byte* data) const override;
-        void mode_data(std::byte* src, std::byte* dst) const override;
+        void move_data(std::byte* src, std::byte* dst) const override;
         void construct_data(std::byte* data) const override;
         size_t get_size() const override;
         component_id_t get() override;
@@ -53,7 +53,7 @@ namespace ant {
     }
 
     template <class C>
-    void Component<C>::mode_data(std::byte* source,
+    void Component<C>::move_data(std::byte* source,
                                  std::byte* destination) const {
         new (&destination[0]) C(std::move(*reinterpret_cast<C*>(source)));
     }

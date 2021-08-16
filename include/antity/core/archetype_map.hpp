@@ -13,6 +13,9 @@ namespace ant {
                                  archetype_key::hasher,
                                  archetype_key::comparator>;
 
+        archetype_map(archetype_handler* handler)
+            : archetype_handler_(handler) {}
+
         archetype_hashtable* get() { return &archetype_hashtable_; }
 
         /**
@@ -29,96 +32,92 @@ namespace ant {
         }
 
         /**
-         * @brief Get the archetype for given signature_t
+         * @brief get and iterator to the first element of underlying
+         *        vector of signatures matching at list all components
+         *        of given signature_t
          *
-         * @param signature_t requested archetype signature_t
-         * @return archetype* requested archetype
+         * @param match signature containing all required components
+         * @return auto iterator to fisrt matching element of the underlying
+         *         vector of signatures
          */
-        archetype* get(const signature_t& signature_t) {
-            return signature_archetype_map_.at(signature_t);
-        }
-
-        auto signaturesBegin(const signature_t& match) {
-            return std::find_if(archetype_signatures_.begin(),
-                                archetype_signatures_.end(),
-                                [&](const signature_t& signature_t) {
-                                    return (match & ~signature_t).none();
+        auto signatures_begin(const archetype_key& match) {
+            return std::find_if(archetype_keys_.begin(),
+                                archetype_keys_.end(),
+                                [&](const archetype_key& key) {
+                                    return (match.signature & ~key.signature).none() && (match.chunk_id == key.chunk_id) ;
                                 });
         }
 
-        auto signatures_end() { return archetype_signatures_.end(); }
+        /**
+         * @brief get next archetype obtained by adding given component to
+         * current archetype
+         *
+         * @tparam C component to add to the current archetype
+         * @param current ptr to the current archetype
+         * @return auto archetype containing all components of current archetype
+         * plus C
+         */
+        template <typename C>
+        archetype* get_next_archetype_add(archetype* current) {
+            signature_t new_archetype_signature
+                = add_type_to_signature<C>(current->key.signature);
+            return get({new_archetype_signature,current->key.chunk_id});
+        }
+
+        template <typename C>
+        archetype* get_next_archetype_remove(archetype* current) {
+            signature_t new_archetype_signature
+                = remove_type_to_signature<C>(current->key.signature);
+            if (new_archetype_signature.none()) {
+                return nullptr;
+            }
+            return get({new_archetype_signature,current->key.chunk_id});
+        }
+
+        /**
+         * @brief get and iterator to the last element of underlying
+         *        vector of signatures
+         *
+         * @return auto iterator to the last element of underlying
+         *        vector of signatures
+         */
+        auto signatures_end() { return archetype_keys_.end(); }
 
         /**
          * @brief deletes archetype associated with given key
+         *        effectively cleaning it's component_arrays
          *
-         * @param archetype_key archetype to be deleted
+         * @param key archetype to be deleted
          */
-        void Deletearchetype(const archetype_key& archetype_key) {
-            deregister_archetype_signature(
-                archetype_hashtable_.at(archetype_key).get());
-            archetype_hashtable_.erase(archetype_key);
+        void delete_archetype(const archetype_key& key) {
+            archetype_handler_->clean_archetype_component_arrays(
+                archetype_hashtable_.at(key).get());
+            archetype_hashtable_.erase(key);
+            std::erase(archetype_keys_,key);
         }
 
-        void OnComponentRegistration(component_id_t componentTypeId) {}
+        void on_component_registration(component_id_t component_type_id) {}
 
-        /**
-         * \brief Retrieve all archetypes that have at least all components in
-         * givent ArchetpeKey \param archetype_id_t \param chunk_id \return
-         * vector<archetype*>
-         */
-        std::vector<archetype*> gets(archetype_id_t archetype_id_t,
-                                     chunk_id_t chunk_id = _null_chunk) {
-            std::vector<archetype*> archetypes;
-            for (auto&& archetype : archetype_hashtable_) {
-                if (!std::ranges::includes(
-                        archetype.second->archetype_id.begin(),
-                        archetype.second->archetype_id.end(),
-                        archetype_id_t.begin(), archetype_id_t.end())) {
-                    continue;
-                }
-                if (chunk_id != _null_chunk
-                    && archetype.second->chunk_id != chunk_id) {
-                    continue;
-                }
-                archetypes.emplace_back(archetype.second.get());
+       private:
+        void create_archetype(const archetype_key& key) {
+            const component_id_list component_ids
+                = signature_to_type_ids(key.signature);
+            auto new_archetype
+                = std::make_unique<archetype>(key, component_ids);
+
+            for (auto&& componentID : component_ids) {
+                new_archetype->byte_arrays.push_back(
+                    byte_array{new std::byte[0], 0});
             }
 
-            return std::move(archetypes);
+            archetype_keys_.push_back(key);
+
+            archetype_hashtable_.emplace(key, std::move(new_archetype));
         }
 
        private:
-        void create_archetype(const archetype_key& archetype_key) {
-            auto newarchetype = std::make_unique<archetype>(
-                archetype_key.archetype_id, archetype_key.chunk_id);
-
-            archetype_hashtable_.emplace(archetype_key,
-                                         std::move(newarchetype));
-            for (auto&& componentID : archetype_key.archetype_id) {
-                archetype_hashtable_.at(archetype_key)
-                    ->byte_arrays.push_back(byte_array{new std::byte[0], 0});
-            }
-            register_archetype_signature(
-                archetype_hashtable_.at(archetype_key).get());
-        }
-
-        inline void register_archetype_signature(archetype* archetype) {
-            archetype->signature
-                = build_archetype_signature(archetype);
-            archetype_signatures_.emplace_back(archetype->signature);
-            signature_archetype_map_.emplace(archetype->signature,
-                                             archetype);
-        }
-
-        inline void deregister_archetype_signature(archetype* arch) {
-            archetype_signatures_.erase(std::find(
-                archetype_signatures_.begin(), archetype_signatures_.end(),
-                arch->signature));
-            signature_archetype_map_.erase(arch->signature);
-        }
-
-       private:
+        archetype_handler* archetype_handler_;
         archetype_hashtable archetype_hashtable_;
-        std::vector<signature_t> archetype_signatures_;
-        std::unordered_map<signature_t, archetype*> signature_archetype_map_;
+        std::vector<archetype_key> archetype_keys_;
     };
 }  // namespace ant

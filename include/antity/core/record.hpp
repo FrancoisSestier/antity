@@ -5,12 +5,12 @@
 
 namespace ant {
 
-    struct Record {
+    struct record_t {
         archetype* entity_archetype = nullptr;
         index_t index = 0;
         chunk_id_t chunk_id = 0;
     };
 
-    using entity_index = robin_hood::unordered_map<entity_t, Record>;
+    using entity_index = robin_hood::unordered_map<entity_t, record_t>;
 
 }  // namespace ant

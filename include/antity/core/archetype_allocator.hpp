@@ -8,71 +8,71 @@ namespace ant {
         /**
          * \brief allocate memory if needed exponential allocation
          * \param archetype
-         * \param componentIndex
+         * \param component_index
          * \param component
          */
-        void auto_allocate(archetype* archetype, size_t componentIndex,
+        void auto_allocate(archetype* archetype, size_t component_index,
                            component_base* component) {
-            if (NeedsSpace(archetype, componentIndex, component->get_size())) {
-                DoubleAllocation(archetype, componentIndex, component);
+            if (needs_space(archetype, component_index, component->get_size())) {
+                double_allocation(archetype, component_index, component);
             }
         }
 
         /**
          * \brief
          * \param archetype Deallocate memory if too much is allocated
-         * \param componentIndex
+         * \param component_index
          * \param component
          */
-        void auto_shrink(archetype* archetype, size_t componentIndex,
+        void auto_shrink(archetype* archetype, size_t component_index,
                          component_base* component) {
-            if (NeedsShriking(archetype, componentIndex,
+            if (needs_shrinking(archetype, component_index,
                               component->get_size())) {
-                ShrinkToFit(archetype, componentIndex, component);
+                shrink_to_fit(archetype, component_index, component);
             }
         }
 
        private:
-        void DoubleAllocation(archetype* archetype, size_t componentIndex,
+        void double_allocation(archetype* archetype, size_t component_index,
                               component_base* component) {
-            auto newSize = archetype->byte_arrays.at(componentIndex).size * 2
+            auto newSize = archetype->byte_arrays.at(component_index).size * 2
                            + component->get_size();
-            Resize(archetype, componentIndex, component, newSize);
+            resize(archetype, component_index, component, newSize);
         }
 
-        void ShrinkToFit(archetype* archetype, size_t componentIndex,
+        void shrink_to_fit(archetype* archetype, size_t component_index,
                          component_base* component) {
             auto newSize = archetype->entities.size() * component->get_size();
-            Resize(archetype, componentIndex, component, newSize);
+            resize(archetype, component_index, component, newSize);
         }
 
-        void Resize(archetype* archetype, size_t componentIndex,
+        void resize(archetype* archetype, size_t component_index,
                     component_base* component, size_t newSize) {
             size_t componentSize = component->get_size();
             auto* newData = component->allocate(newSize);
             for (std::size_t e = 0; e < archetype->entities.size(); ++e) {
-                component->mode_data(&archetype->byte_arrays[componentIndex]
+                component->move_data(&archetype->byte_arrays[component_index]
                                           .componentData[e * componentSize],
                                      &newData[e * componentSize]);
-                component->destroy_data(&archetype->byte_arrays[componentIndex]
+                component->destroy_data(&archetype->byte_arrays[component_index]
                                              .componentData[e * componentSize]);
             }
-            delete[] archetype->byte_arrays[componentIndex].componentData;
-            archetype->byte_arrays.at(componentIndex).size = newSize;
-            archetype->byte_arrays[componentIndex].componentData = newData;
+            delete[] archetype->byte_arrays[component_index].componentData;
+            archetype->byte_arrays.at(component_index).size = newSize;
+            archetype->byte_arrays[component_index].componentData = newData;
         }
 
-        bool NeedsSpace(archetype* archetype, size_t componentIndex,
+        bool needs_space(archetype* archetype, size_t component_index,
                         size_t componentSize) {
-            size_t allocated = archetype->byte_arrays.at(componentIndex).size;
+            size_t allocated = archetype->byte_arrays.at(component_index).size;
             size_t needed
                 = archetype->entities.size() * componentSize + componentSize;
             return needed > allocated;
         }
 
-        bool NeedsShriking(archetype* archetype, size_t componentIndex,
+        bool needs_shrinking(archetype* archetype, size_t component_index,
                            size_t componentSize) {
-            size_t allocated = archetype->byte_arrays.at(componentIndex).size;
+            size_t allocated = archetype->byte_arrays.at(component_index).size;
             size_t used = archetype->entities.size() * componentSize;
             return allocated > used / 2;
         }

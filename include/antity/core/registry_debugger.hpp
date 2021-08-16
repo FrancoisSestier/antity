@@ -9,7 +9,7 @@ namespace ant {
     class registry_debugger {
        public:
         template <typename C>
-        void OnComponentRegistration() {
+        void on_component_registration() {
             componentNameMap.emplace(type_id_generator::get<C>(),
                                      typeid(C).name());
         }

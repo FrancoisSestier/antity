@@ -13,8 +13,7 @@ namespace ant {
 
             ComponentIterator() : m_ptr(nullptr) {}
             ComponentIterator(C* rhs) : m_ptr(rhs) {}
-            ComponentIterator(const ComponentIterator& rhs)
-                : m_ptr(rhs.m_ptr) {}
+
 
             pointer get() { return m_ptr; }
 
@@ -112,9 +111,9 @@ namespace ant {
     };
 
     template <typename T>
-    inline auto get_componentArray(archetype* archetype) {
-        for (int i = 0; i < archetype->archetype_id.size(); i++) {
-            if (type_id_generator::get<T>() == archetype->archetype_id.at(i)) {
+    inline auto get_component_array(archetype* archetype) {
+        for (size_t i = 0; i < archetype->component_ids.size(); i++) {
+            if (type_id_generator::get<T>() == archetype->component_ids.at(i)) {
                 return (ComponentArray<std::remove_reference_t<T>>(
                     &archetype->byte_arrays[i]));
             }
