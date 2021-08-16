@@ -340,13 +340,13 @@ namespace ant {
         chunk_id_t chunk_id = _null_chunk) {
         multi_archetype_view<Cs...> multiarchetypeView;
         for (auto&& archetype : *archetype_map->get()) {
-            if (!std::ranges::includes(archetype.second->archetype_id.begin(),
-                                       archetype.second->archetype_id.end(),
+            if (!std::ranges::includes(archetype.second->component_ids.begin(),
+                                       archetype.second->component_ids.end(),
                                        component_id_list.begin(),
                                        component_id_list.end())) {
                 continue;
             }
-            if (archetype.second->chunk_id != chunk_id
+            if (archetype.second->key.chunk_id != chunk_id
                 && chunk_id != _null_chunk) {
                 continue;
             }
