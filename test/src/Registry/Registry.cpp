@@ -91,3 +91,38 @@ TEST(Registry, create_with_comps) {
     ASSERT_EQ(b, 3.f);
     ASSERT_EQ(c.b, 2);
 }
+
+TEST(registry, for_each) {
+    registry reg;
+
+    chunk_id_t id = 0;
+
+    reg.save<int>();
+    reg.save<float>();
+    reg.save<char>();
+
+    entity_t entity = reg.create();
+    entity_t other = reg.create();
+
+    reg.add<int>(entity, 1);
+    reg.add<int>(other, 10);
+    reg.add<float>(entity, .4f);
+    reg.add<char>(other, 'c');
+
+    int counter = 0;
+
+    reg.for_each([&](entity_t e,int& i, float& f) {
+        counter++;
+        ASSERT_EQ(e, entity);
+        ASSERT_EQ(i, 1);
+        ASSERT_EQ(f, .4f);
+        f = .5f;
+    });
+
+    auto [j] = reg.get_entity_components<float>(entity);
+    ASSERT_EQ(j, .5f);
+
+    ASSERT_EQ(counter, 1);
+
+
+}
