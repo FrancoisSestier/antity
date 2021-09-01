@@ -191,7 +191,7 @@ namespace ant {
                                    archetype* new_archetype, size_t old_index) {
             int new_component_index = 0;
             size_t omited_component_index{
-                archetype->component_id_index.at(type_id_generator::get<C>())};
+                old_archetype->component_id_index.at(type_id_generator::get<C>())};
 
             for (int i = 0; i < old_archetype->byte_arrays.size(); i++) {
                 component_base* component
@@ -221,10 +221,10 @@ namespace ant {
          * @return std::tuple<Cs&...> tuple of component reference
          */
         template <typename... Cs>
-        std::tuple<Cs&...> get_components(archetype* archetype,
+        std::tuple<Cs&...> get_components(archetype* arch,
                                           size_t entity_index) {
             return std::tuple<Cs&...>(
-                (get_component<Cs>(archetype, entity_index))...);
+                (get_component<Cs>(arch, entity_index))...);
         }
 
         /**
@@ -236,12 +236,12 @@ namespace ant {
          * @return C& reference to entity component
          */
         template <typename C>
-        C& get_component(archetype* archetype, size_t index) {
+        C& get_component(archetype* arch, size_t index) {
             size_t component_index{
-                archetype->component_id_index.at(type_id_generator::get<C>())};
+                arch->component_id_index.at(type_id_generator::get<C>())};
 
             return *std::launder(
-                reinterpret_cast<C*>(&archetype->byte_arrays[component_index]
+                reinterpret_cast<C*>(&arch->byte_arrays[component_index]
                                           .componentData[index * sizeof(C)]));
         }
 
