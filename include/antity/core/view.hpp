@@ -7,7 +7,7 @@ namespace ant {
 
     template <typename... Cs>
     class archetype_view final {
-        using component_arrays = std::tuple<ComponentArray<Cs>...>;
+        using component_arrays = std::tuple<component_array<Cs>...>;
 
        public:
         class archetype_view_iterator final {
@@ -71,7 +71,7 @@ namespace ant {
             [[nodiscard]] reference operator[](
                 const difference_type value) const {
                 return std::tie(owner->archetype->entities[value],
-                                std::get<ComponentArray<Cs>>(
+                                std::get<component_array<Cs>>(
                                     owner->component_arrays_)[value]...);
             }
 
@@ -107,13 +107,13 @@ namespace ant {
 
             [[nodiscard]] pointer operator->() const {
                 return pointer{&(owner->archetype_->entities[index]),
-                               &(std::get<ComponentArray<Cs>>(
+                               &(std::get<component_array<Cs>>(
                                    owner->component_arrays_)[index])...};
             }
 
             [[nodiscard]] reference operator*() const {
                 return reference{owner->archetype_->entities[index],
-                                 std::get<ComponentArray<Cs>>(
+                                 std::get<component_array<Cs>>(
                                      owner->component_arrays_)[index]...};
             }
 
@@ -189,8 +189,7 @@ namespace ant {
                             == owner->archetype_map_->signatures_end()) {
                             return *this;
                         }
-                    } while ((owner->include_ & ~(*archetype_signature_iterator_).signature)
-                                 .any());
+                    } while (!archetype_signature_iterator_->match(archetype_key{owner->include_,owner->chunk_id_}));
 
                     current_view_ = archetype_view<Cs...>(
                         owner->archetype_map_->get(*archetype_signature_iterator_));

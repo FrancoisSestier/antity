@@ -6,8 +6,10 @@
 #include <antity/core/record.hpp>
 #include <antity/core/registry_debugger.hpp>
 #include <antity/core/view.hpp>
+#include <antity/utility/function_traits.hpp>
 #include <antity/utility/unique_id_dispenser.hpp>
 #include <chrono>
+#include <concepts>
 #include <stdexcept>
 #include <string>
 
@@ -41,7 +43,16 @@ namespace ant {
             return entity_t;
         }
 
-        /* Not Implemented !*/
+        /**
+         * @brief create an entity with given components
+         *        it's faster than calling create then add
+         *        for each components because no components
+         *        has to be moved from one archetype to another
+         *
+         * @tparam Cs types of components to create
+         * @param chunk_id id of the chunk entity has to be placed in
+         * @return entity_t handle to the entity
+         */
         template <typename... Cs>
         entity_t create(chunk_id_t chunk_id, Cs&&...);
 
@@ -71,6 +82,11 @@ namespace ant {
         template <typename C>
         void remove(entity_t entity);
 
+        /**
+         * @brief register components in the registry
+         *
+         * @tparam Cs component types
+         */
         template <typename... Cs>
         void save();
 
@@ -92,6 +108,9 @@ namespace ant {
         template <typename... Cs>
         std::tuple<Cs&...> get_entity_components(entity_t entity_t);
 
+        template <typename F>
+        void for_each(F&& f, chunk_id_t chunk_id = _null_chunk);
+
        private:
         template <typename C>
         void save_impl();
@@ -111,7 +130,7 @@ namespace ant {
         archetype_handler archetype_handler_;
         registry_debugger registry_debugger_;
     };
-    
+
     template <typename... Cs>
     entity_t registry::create(chunk_id_t chunk_id, Cs&&... cs) {
         entity_t entity = create(chunk_id);
@@ -120,7 +139,7 @@ namespace ant {
         archetype* new_archetype
             = archetype_map_.get(archetype_key{signature, chunk_id});
         ((archetype_handler_.insert_component<Cs>(new_archetype,
-                                                 std::forward<Cs>(cs))),
+                                                  std::forward<Cs>(cs))),
          ...);
         entity_index_->at(entity).entity_archetype = new_archetype;
         entity_index_->at(entity).index = new_archetype->entities.size();
@@ -207,7 +226,8 @@ namespace ant {
     template <typename C>
     void registry::remove_impl(archetype* old_archetype, entity_t entity,
                                record_t record) {
-        archetype* new_archetype = archetype_map_.get_next_archetype_remove<C>(old_archetype);
+        archetype* new_archetype
+            = archetype_map_.get_next_archetype_remove<C>(old_archetype);
 
         archetype_handler_.move_comp_to_and_omit<C>(
             old_archetype, new_archetype, record.index);
@@ -235,5 +255,18 @@ namespace ant {
         return archetype_handler_.get_components<Cs...>(
             entity_index_->at(entity).entity_archetype,
             entity_index_->at(entity).index);
+    }
+
+    template <typename F>
+    void registry::for_each(F&& f, chunk_id_t chunk_id) {
+        typename functor_traits<F>::args_type types;
+
+        archetype_key include{get_signature(types), chunk_id};
+        for (const auto& key : archetype_map_.get_keys()) {
+            if (key.match(include)) {
+                archetype_handler_.apply(std::forward<F>(f), types,
+                                         archetype_map_.get(key));
+            }
+        }
     }
 }  // namespace ant
