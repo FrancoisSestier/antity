@@ -4,6 +4,7 @@
 #include <antity/core/component.hpp>
 #include <antity/core/record.hpp>
 #include <antity/core/registry.hpp>
+#include <antity/utility/function_traits.hpp>
 #include <ranges>
 
 namespace ant {
@@ -36,13 +37,9 @@ namespace ant {
         }
 
         template <typename C>
-        void insert_component(archetype* archetype,
-                               C&& c) {
-            size_t component_index
-                = std::distance(archetype->component_ids.begin(),
-                                std::find(archetype->component_ids.begin(),
-                                          archetype->component_ids.end(),
-                                          type_id_generator::get<C>()));
+        void insert_component(archetype* archetype, C&& c) {
+            size_t component_index{
+                archetype->component_id_index.at(type_id_generator::get<C>())};
             archetype_allocator_.auto_allocate(
                 archetype, component_index,
                 component_map_->at(type_id_generator::get<C>()).get());
@@ -193,11 +190,9 @@ namespace ant {
         void move_comp_to_and_omit(archetype* old_archetype,
                                    archetype* new_archetype, size_t old_index) {
             int new_component_index = 0;
-            size_t omited_component_index
-                = std::distance(old_archetype->component_ids.begin(),
-                                std::find(old_archetype->component_ids.begin(),
-                                          old_archetype->component_ids.end(),
-                                          type_id_generator::get<C>()));
+            size_t omited_component_index{
+                archetype->component_id_index.at(type_id_generator::get<C>())};
+
             for (int i = 0; i < old_archetype->byte_arrays.size(); i++) {
                 component_base* component
                     = component_map_->at(old_archetype->component_ids.at(i))
@@ -228,8 +223,8 @@ namespace ant {
         template <typename... Cs>
         std::tuple<Cs&...> get_components(archetype* archetype,
                                           size_t entity_index) {
-            return 
-                std::tuple<Cs&...>((get_component<Cs>(archetype, entity_index)) ...);
+            return std::tuple<Cs&...>(
+                (get_component<Cs>(archetype, entity_index))...);
         }
 
         /**
@@ -242,14 +237,25 @@ namespace ant {
          */
         template <typename C>
         C& get_component(archetype* archetype, size_t index) {
-            const size_t component_index
-                = std::find(archetype->component_ids.begin(),
-                                    archetype->component_ids.end(),
-                                    type_id_generator::get<C>())
-                  - archetype->component_ids.begin();
-            return *std::launder(reinterpret_cast<C*>(
-                &archetype->byte_arrays[component_index]
-                     .componentData[index * sizeof(C)]));
+            size_t component_index{
+                archetype->component_id_index.at(type_id_generator::get<C>())};
+
+            return *std::launder(
+                reinterpret_cast<C*>(&archetype->byte_arrays[component_index]
+                                          .componentData[index * sizeof(C)]));
+        }
+
+        template <typename F, typename Entity_T, typename... Cs>
+        requires(std::invocable<F, entity_t, Cs...>) void apply(
+            F&& f, type_list<Entity_T, Cs...> args_type, archetype* archetype) {
+            auto tup = std::make_tuple(
+                get_component_array<std::remove_reference_t<Cs>>(archetype)...);
+
+            for (size_t i = 0; i < archetype->entities.size(); ++i) {
+                f(archetype->entities.at(i),
+                  std::get<decltype(get_component_array<std::remove_reference_t<Cs>>(archetype))>(tup)[i]...
+                   );
+            }
         }
 
        private:
