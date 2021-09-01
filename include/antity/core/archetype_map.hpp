@@ -98,12 +98,20 @@ namespace ant {
 
         void on_component_registration(component_id_t component_type_id) {}
 
+        auto& get_keys() { return archetype_keys_;}
+
        private:
         void create_archetype(const archetype_key& key) {
             const component_id_list component_ids
                 = signature_to_type_ids(key.signature);
+
+
             auto new_archetype
                 = std::make_unique<archetype>(key, component_ids);
+
+            for(size_t i =0; i<component_ids.size(); ++i){
+                new_archetype->component_id_index.emplace(component_ids.at(i),i);
+            }
 
             for (auto&& componentID : component_ids) {
                 new_archetype->byte_arrays.push_back(
